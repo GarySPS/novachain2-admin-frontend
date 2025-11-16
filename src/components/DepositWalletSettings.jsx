@@ -119,7 +119,7 @@ export default function DepositWalletSettings() {
         )
       );
 
-    } catch (err) {
+   } catch (err) {
       console.error("Error uploading QR code:", err);
       setError(`Failed to upload QR for ${supportedCoins[i].symbol}`);
       setWallets(ws =>
@@ -147,7 +147,7 @@ export default function DepositWalletSettings() {
 
       const res = await fetch(API_URL, {
         method: "POST",
-      _ headers: {
+        headers: { // <-- ERROR WAS HERE
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json', // Set content type to JSON
         },
@@ -184,15 +184,15 @@ export default function DepositWalletSettings() {
             <div key={w.symbol} className="mb-2 bg-[#232836]/80 p-5 rounded-xl shadow border border-[#ffd70022] flex flex-col md:flex-row md:items-center gap-3 md:gap-8">
               <div className="min-w-[130px] flex items-center gap-2 font-bold text-white text-lg">
                 <LucideImage size={22} className="text-[#16d79c]" />
-                {w.name} <span className="ml-2 text-[#ffd700]">({w.symbol})</span>
+                {w.name} <span className="ml-2 text-[#ffd700]">({w.symbol})</span>
               </div>
               <input
                 type="text"
                 value={w.address || ""}
                 onChange={e => handleAddressChange(i, e.target.value)}
-                className="flex-1 px-3 py-2 rounded-xl border border-gray-500 bg-[#181b25] text-white font-semibold shadow"
+className="flex-1 px-3 py-2 rounded-xl border border-gray-500 bg-[#181b25] text-white font-semibold shadow"
                 placeholder="Deposit Address"
-                style={{ maxWidth: 330 }}
+                style={{ maxWidth: 330 }}
               />
               {/* --- NEW: Updated Image/Upload Logic --- */}
               <div className="flex flex-col items-center">
@@ -205,12 +205,12 @@ export default function DepositWalletSettings() {
                 ) : (
                   <div className="w-20 h-20 flex items-center justify-center rounded-lg bg-white text-gray-400 text-xs mb-2 border border-[#eee]">
                     No QR
-                  </div>
+                  </div>
                 )}
                 <label className={`flex items-center gap-1 px-2 py-1 rounded-lg bg-gradient-to-r from-[#ffd700]/80 to-[#16d79c]/80 text-[#232836] font-bold shadow text-xs transition mt-1 ${w.isUploading ? 'opacity-50 cursor-not-allowed' : 'hover:opacity-90 cursor-pointer'}`}>
                   {w.isUploading ? (
                     <Loader2 size={14} className="animate-spin" />
-                  ) : (
+                  ) : ( // <-- ERROR WAS HERE
                     <UploadCloud size={14} />
                   )}
                   {w.isUploading ? "Uploading..." : "Upload QR"}
@@ -219,7 +219,7 @@ export default function DepositWalletSettings() {
                     accept="image/*"
                     onChange={e => handleQRUpload(i, e.target.files[0])}
                     className="hidden"
-                    disabled={w.isUploading}
+                _   disabled={w.isUploading} // <-- ERROR WAS HERE
                   />
                 </label>
               </div>
@@ -234,7 +234,7 @@ export default function DepositWalletSettings() {
         disabled={saving || wallets.some(w => w.isUploading)}
       >
         {saving && <Loader2 className="animate-spin" size={19} />}
-        {saving ? "Saving..." : "Save Settings"}
+        {saving ? "Saving..." : "Save Settings"} 
       </button>
     </div>
   );
