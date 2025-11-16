@@ -3,7 +3,7 @@ import { CheckCircle2, XCircle, Loader2, Image } from "lucide-react";
 import { API_BASE } from "../config";
 
 // Supabase Storage config
-const SUPABASE_PUBLIC_URL = "https://zgnefojwdijycgcqngke.supabase.co/storage/v1/object/public/deposit";
+const SUPABASE_PUBLIC_URL = "https://obrfnkggcfgfspyqgtws.supabase.co/storage/v1/object/public/deposit";
 
 export default function AdminDeposits() {
   const [deposits, setDeposits] = useState([]);
