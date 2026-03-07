@@ -181,27 +181,26 @@ export default function DepositWalletSettings() {
       ) : (
         <div className="flex flex-col gap-9">
           {wallets.map((w, i) => (
-            <div key={w.symbol} className="mb-2 bg-[#232836]/80 p-5 rounded-xl shadow border border-[#ffd70022] flex flex-col md:flex-row md:items-center gap-3 md:gap-8">
+            <div key={w.symbol} className="mb-2 bg-[#232836]/80 p-4 rounded-xl shadow border border-[#ffd70022] flex flex-col sm:flex-row sm:items-center gap-4">
               <div className="min-w-[130px] flex items-center gap-2 font-bold text-white text-lg">
                 <LucideImage size={22} className="text-[#16d79c]" />
                 {w.name} <span className="ml-2 text-[#ffd700]">({w.symbol})</span>
               </div>
               <input
-                type="text"
-                value={w.address || ""}
-                onChange={e => handleAddressChange(i, e.target.value)}
-className="flex-1 px-3 py-2 rounded-xl border border-gray-500 bg-[#181b25] text-white font-semibold shadow"
-                placeholder="Deposit Address"
-                style={{ maxWidth: 330 }}
-              />
+  type="text"
+  value={w.address || ""}
+  onChange={e => handleAddressChange(i, e.target.value)}
+  placeholder="Deposit Address"
+  className="flex-1 min-w-[200px] px-3 py-2 rounded-xl border border-gray-500 bg-[#181b25] text-white font-semibold shadow"
+/>
               {/* --- NEW: Updated Image/Upload Logic --- */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center justify-center min-w-[110px]">
                 {(w.qr_preview || w.qr_url) ? (
-                  <img 
-                    src={w.qr_preview || w.qr_url} 
-                    alt={w.symbol + " QR"} 
-                    className="w-20 h-20 rounded-lg bg-white border border-[#ffd70077] shadow mb-2" 
-                  />
+                  <img
+  src={w.qr_preview || w.qr_url}
+  alt={w.symbol + " QR"}
+  className="w-[90px] h-[90px] object-contain rounded-lg bg-white border border-[#ffd70077] shadow mb-2"
+/>
                 ) : (
                   <div className="w-20 h-20 flex items-center justify-center rounded-lg bg-white text-gray-400 text-xs mb-2 border border-[#eee]">
                     No QR
