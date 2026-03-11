@@ -4,17 +4,19 @@ import AdminUsers from "../components/AdminUsers";
 import AdminDeposits from "../components/AdminDeposits";
 import AdminWithdrawals from "../components/AdminWithdrawals";
 import DepositWalletSettings from "../components/DepositWalletSettings";
+import AdminPhone from "../components/AdminPhone";
 import AdminBalance from "../components/AdminBalance";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, DollarSign, Settings, Banknote, PlusCircle, KeyRound } from "lucide-react";
+import { Users, DollarSign, Settings, Banknote, PlusCircle, KeyRound, Phone } from "lucide-react"; // Added Phone icon
 
 const tabList = [
   { key: "users", label: "Users", icon: <Users size={18} className="mr-1 text-[#16d79c]" /> },
+  { key: "phone", label: "Phone", icon: <Phone size={18} className="mr-1 text-sky-400" /> }, // Add this line
   { key: "deposits", label: "Deposits", icon: <DollarSign size={18} className="mr-1 text-[#2dd4bf]" /> },
   { key: "walletSettings", label: "Deposit Settings", icon: <Settings size={18} className="mr-1 text-[#3af0ff]" /> },
   { key: "withdrawals", label: "Withdrawals", icon: <Banknote size={18} className="mr-1 text-[#f34e6d]" /> },
-  { key: "balance", label: "Adjust Balance", icon: <PlusCircle size={18} className="mr-1 text-[#ffd700]" /> }, // <-- Add this tab!
+  { key: "balance", label: "Adjust Balance", icon: <PlusCircle size={18} className="mr-1 text-[#ffd700]" /> },
 ];
 
 export default function AdminDashboard() {
@@ -165,6 +167,18 @@ export default function AdminDashboard() {
               <AdminBalance />
             </motion.div>
           )}
+{activeTab === "phone" && (
+  <motion.div
+    key="phone"
+    initial={{ opacity: 0, y: 32 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -32 }}
+    transition={{ duration: 0.32, ease: "easeOut" }}
+    className="w-full"
+  >
+    <AdminPhone />
+  </motion.div>
+)}
         </AnimatePresence>
       </div>
 
