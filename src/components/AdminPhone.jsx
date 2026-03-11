@@ -1,3 +1,5 @@
+//src>components>AdminPhone.jsx
+
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
@@ -68,14 +70,15 @@ export default function AdminPhone() {
               <th className="px-6 py-4 font-semibold">ID</th>
               <th className="px-6 py-4 font-semibold">Username</th>
               <th className="px-6 py-4 font-semibold">Phone Number</th>
-              <th className="px-6 py-4 font-semibold">Status</th>
+<th className="px-6 py-4 font-semibold">Code</th>
+<th className="px-6 py-4 font-semibold">Status</th>
               <th className="px-6 py-4 font-semibold text-right">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-700/50">
             {users.length === 0 ? (
               <tr>
-                <td colSpan="5" className="py-8 text-center text-slate-500">
+                <td colSpan="6" className="py-8 text-center text-slate-500">
                   No phone users found.
                 </td>
               </tr>
@@ -89,7 +92,12 @@ export default function AdminPhone() {
                     <td className="px-6 py-4 font-mono text-xs text-slate-400">#{u.id}</td>
                     <td className="px-6 py-4 font-medium text-slate-200">{u.username}</td>
                     <td className="px-6 py-4 font-mono text-sky-400">{cleanPhone}</td>
-                    <td className="px-6 py-4">
+
+<td className="px-6 py-4 font-mono text-yellow-400">
+  {u.memberCode || "N/A"}
+</td>
+
+<td className="px-6 py-4">
                       {u.verified ? (
                         <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400 border border-emerald-500/20">
                           Approved
