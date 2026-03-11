@@ -10,12 +10,11 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ---------------------------------
 
 const supportedCoins = [
-  { symbol: "USDT", name: "Tether USDT" },
-  { symbol: "BTC", name: "Bitcoin" },
-  { symbol: "ETH", name: "Ethereum" },
-  { symbol: "TON", name: "Toncoin" }, 
-  { symbol: "SOL", name: "Solana" },
-  { symbol: "XRP", name: "Ripple" },
+  { symbol: "USDT", name: "Tether USDT" },
+  { symbol: "USDC", name: "USD Coin" },
+  { symbol: "BTC", name: "Bitcoin" },
+  { symbol: "ETH", name: "Ethereum" },
+  { symbol: "BNB", name: "BNB" },
 ];
 
 import { API_BASE } from "../config";
@@ -214,12 +213,12 @@ export default function DepositWalletSettings() {
                   )}
                   {w.isUploading ? "Uploading..." : "Upload QR"}
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={e => handleQRUpload(i, e.target.files[0])}
-                    className="hidden"
-                _   disabled={w.isUploading} // <-- ERROR WAS HERE
-                  />
+                    type="file"
+                    accept="image/*"
+                    onChange={e => handleQRUpload(i, e.target.files[0])}
+                    className="hidden"
+                    disabled={w.isUploading}
+                  />
                 </label>
               </div>
               {/* ----------------------------------- */}
