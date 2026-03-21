@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Loader2, Wallet2, Image as LucideImage, UploadCloud, CheckCircle2 } from "lucide-react";
 import { createClient } from '@supabase/supabase-js';
+import { API_BASE } from "../config";
 
 // --- NEW: Add Supabase Client ---
 // (I got these from your WalletPage.js file)
@@ -17,7 +18,6 @@ const supportedCoins = [
   { symbol: "BNB", name: "BNB" },
 ];
 
-import { API_BASE } from "../config";
 const API_URL = `${API_BASE}/api/admin/deposit-addresses`;
 
 export default function DepositWalletSettings() {
