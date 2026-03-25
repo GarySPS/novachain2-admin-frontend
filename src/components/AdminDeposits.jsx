@@ -1,3 +1,5 @@
+//src>components>AdminDeposits.jsx
+
 import React, { useEffect, useState } from "react";
 import { CheckCircle2, XCircle, Loader2, Image } from "lucide-react";
 import { API_BASE } from "../config";
@@ -115,41 +117,50 @@ export default function AdminDeposits() {
                   {/* SLIP (Deposit Screenshot) */}
                   <td>
                     {d.screenshot ? (
-                      (() => {
-                        let encodedUrl;
-                        if (!d.screenshot.includes('/')) {
-                          // Flat style filename
-                          encodedUrl = `${SUPABASE_PUBLIC_URL}/${encodeURIComponent(d.screenshot)}`;
-                        } else if (d.screenshot.startsWith("/uploads/")) {
-                          encodedUrl = `${API_BASE}${d.screenshot}`;
-                        } else if (d.screenshot.startsWith("http")) {
-                          encodedUrl = d.screenshot;
-                        } else {
-                          // Legacy (should not happen, but safe)
-                          const pathParts = d.screenshot.split('/');
-                          const fileName = encodeURIComponent(pathParts.pop());
-                          encodedUrl = `${SUPABASE_PUBLIC_URL}/${pathParts.join('/')}/${fileName}`;
-                        }
-                        return (
-                          <a
-                            href={encodedUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-block"
-                            title="View deposit slip"
-                          >
-                            <img
-                              src={encodedUrl}
-                              alt="Deposit Screenshot"
-                              className="rounded-md shadow border border-[#ffd70044] object-cover w-[48px] h-[48px] hover:scale-105 transition"
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = "https://via.placeholder.com/48?text=No+Image";
-                              }}
-                            />
-                          </a>
-                        );
-                      })()
+                      d.screenshot.startsWith("web3-tx-") ? (
+                        <span 
+                          className="inline-block px-2 py-1 bg-blue-500/20 text-blue-300 text-[11px] font-bold tracking-wider uppercase rounded border border-blue-500/30"
+                          title={`Transaction Hash: ${d.screenshot.replace("web3-tx-", "")}`}
+                        >
+                          Web3 Tx
+                        </span>
+                      ) : (
+                        (() => {
+                          let encodedUrl;
+                          if (!d.screenshot.includes('/')) {
+                            // Flat style filename
+                            encodedUrl = `${SUPABASE_PUBLIC_URL}/${encodeURIComponent(d.screenshot)}`;
+                          } else if (d.screenshot.startsWith("/uploads/")) {
+                            encodedUrl = `${API_BASE}${d.screenshot}`;
+                          } else if (d.screenshot.startsWith("http")) {
+                            encodedUrl = d.screenshot;
+                          } else {
+                            // Legacy (should not happen, but safe)
+                            const pathParts = d.screenshot.split('/');
+                            const fileName = encodeURIComponent(pathParts.pop());
+                            encodedUrl = `${SUPABASE_PUBLIC_URL}/${pathParts.join('/')}/${fileName}`;
+                          }
+                          return (
+                            <a
+                              href={encodedUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-block"
+                              title="View deposit slip"
+                            >
+                              <img
+                                src={encodedUrl}
+                                alt="Deposit Screenshot"
+                                className="rounded-md shadow border border-[#ffd70044] object-cover w-[48px] h-[48px] hover:scale-105 transition"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = "https://via.placeholder.com/48?text=No+Image";
+                                }}
+                              />
+                            </a>
+                          );
+                        })()
+                      )
                     ) : (
                       <span className="flex items-center gap-1 text-gray-400">
                         <Image size={18} /> —

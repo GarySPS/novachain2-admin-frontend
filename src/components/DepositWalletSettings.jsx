@@ -1,3 +1,5 @@
+//src>components>DepositWalletSettings.jsx
+
 import React, { useEffect, useState } from "react";
 import { Loader2, Wallet2, Image as LucideImage, UploadCloud, CheckCircle2 } from "lucide-react";
 import { createClient } from '@supabase/supabase-js';

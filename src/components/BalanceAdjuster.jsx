@@ -62,11 +62,10 @@ export default function BalanceAdjuster({ userId }) {
             className="flex-1 bg-[#2a3048] border border-yellow-400 rounded px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400"
           >
             <option value="USDT">USDT</option>
+            <option value="USDC">USDC</option>
             <option value="BTC">BTC</option>
             <option value="ETH">ETH</option>
-            <option value="TON">TON</option>
-            <option value="SOL">SOL</option>
-            <option value="XRP">XRP</option>
+            <option value="BNB">BNB</option>
           </select>
         </div>
 
