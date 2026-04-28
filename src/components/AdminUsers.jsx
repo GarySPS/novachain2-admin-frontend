@@ -6,7 +6,7 @@ import { UserCircle2, BadgeCheck, XCircle, Loader2, Eye, ExternalLink, LogIn } f
 import { API_BASE } from "../config";
 
 const MAIN_API_BASE = "https://novachain2-backend.onrender.com";
-const USER_FRONTEND_URL = "https://your-user-frontend.com"; // Replace with your user frontend URL
+const USER_FRONTEND_URL = "https://novachain2-frontend-5d34.vercel.app";
 
 // KYC image resolver (always uses main backend for /uploads)
 function resolveKYCUrl(raw) {
