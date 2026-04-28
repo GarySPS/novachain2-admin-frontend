@@ -149,16 +149,6 @@ export default function BalanceAdjuster({ userId, onDone }) {
                 {t("balance.amount")}
               </label>
               <div className="relative">
-                <input
-                  type="number"
-                  min="0"
-                  step="any"
-                  value={amount}
-                  onChange={e => setAmount(e.target.value)}
-                  required
-                  placeholder={`0.00 ${coin}`}
-                  className="w-full bg-[#1e2434] border-2 border-gray-700 rounded-xl px-4 py-3 text-white font-mono text-lg focus:outline-none focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700]/20 transition-all"
-                />
                 {amount && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
                     ≈ {parseFloat(amount || 0).toFixed(2)} {coin}
