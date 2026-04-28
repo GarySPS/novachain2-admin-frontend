@@ -1,10 +1,8 @@
 // src/components/BalanceAdjuster.jsx
-
-// src/components/BalanceAdjuster.jsx
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { Loader2, Plus, Minus, Snowflake, Coins, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
+import { Loader2, Plus, Minus, Snowflake, Coins, TrendingUp, AlertCircle, Zap } from "lucide-react";
 import { API_BASE } from "../config";
 import UserBalanceTable from "./UserBalanceTable";
 
@@ -24,7 +22,7 @@ export default function BalanceAdjuster({ userId, onDone }) {
     switch(action) {
       case "add": 
         return { 
-          icon: <Plus size={20} />, 
+          icon: <Plus size={22} />, 
           title: t("balance.addBalance"),
           color: "from-emerald-500 to-green-600",
           hoverColor: "from-emerald-600 to-green-700",
@@ -34,7 +32,7 @@ export default function BalanceAdjuster({ userId, onDone }) {
         };
       case "reduce": 
         return { 
-          icon: <Minus size={20} />, 
+          icon: <Minus size={22} />, 
           title: t("balance.reduceBalance"),
           color: "from-orange-500 to-red-600",
           hoverColor: "from-orange-600 to-red-700",
@@ -44,7 +42,7 @@ export default function BalanceAdjuster({ userId, onDone }) {
         };
       case "freeze": 
         return { 
-          icon: <Snowflake size={20} />, 
+          icon: <Snowflake size={22} />, 
           title: t("balance.freezeBalance"),
           color: "from-blue-500 to-cyan-600",
           hoverColor: "from-blue-600 to-cyan-700",
@@ -124,7 +122,7 @@ export default function BalanceAdjuster({ userId, onDone }) {
 
         <form onSubmit={handleSubmit} className="p-6">
           {/* 3-Column Grid for Controls */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
             {/* Coin Selection */}
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
@@ -169,63 +167,63 @@ export default function BalanceAdjuster({ userId, onDone }) {
               </div>
             </div>
 
-            {/* Action Selection */}
+            {/* Action Selection - ENLARGED BUTTONS */}
             <div>
               <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-                <AlertCircle size={16} className="text-[#ffd700]" />
+                <Zap size={16} className="text-[#ffd700]" />
                 {t("balance.action")}
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() => setAction("add")}
-                  className={`px-3 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-1 ${
+                  className={`py-3.5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
                     action === "add" 
-                      ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg scale-105"
-                      : "bg-[#1e2434] text-gray-400 hover:bg-[#252b3d] hover:text-emerald-400 border border-gray-700"
+                      ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg scale-105 ring-2 ring-emerald-400/50"
+                      : "bg-[#1e2434] text-gray-400 hover:bg-[#252b3d] hover:text-emerald-400 border border-gray-700 hover:border-emerald-500/50"
                   }`}
                 >
-                  <Plus size={14} /> {t("balance.add")}
+                  <Plus size={18} /> {t("balance.add")}
                 </button>
                 <button
                   type="button"
                   onClick={() => setAction("reduce")}
-                  className={`px-3 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-1 ${
+                  className={`py-3.5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
                     action === "reduce" 
-                      ? "bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg scale-105"
-                      : "bg-[#1e2434] text-gray-400 hover:bg-[#252b3d] hover:text-orange-400 border border-gray-700"
+                      ? "bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg scale-105 ring-2 ring-orange-400/50"
+                      : "bg-[#1e2434] text-gray-400 hover:bg-[#252b3d] hover:text-orange-400 border border-gray-700 hover:border-orange-500/50"
                   }`}
                 >
-                  <Minus size={14} /> {t("balance.reduce")}
+                  <Minus size={18} /> {t("balance.reduce")}
                 </button>
                 <button
                   type="button"
                   onClick={() => setAction("freeze")}
-                  className={`px-3 py-2.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-1 ${
+                  className={`py-3.5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
                     action === "freeze" 
-                      ? "bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-lg scale-105"
-                      : "bg-[#1e2434] text-gray-400 hover:bg-[#252b3d] hover:text-blue-400 border border-gray-700"
+                      ? "bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-lg scale-105 ring-2 ring-blue-400/50"
+                      : "bg-[#1e2434] text-gray-400 hover:bg-[#252b3d] hover:text-blue-400 border border-gray-700 hover:border-blue-500/50"
                   }`}
                 >
-                  <Snowflake size={14} /> {t("balance.freeze")}
+                  <Snowflake size={18} /> {t("balance.freeze")}
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Quick Amount Buttons */}
+          {/* Quick Amount Buttons - VISUALLY ENHANCED */}
           {action !== "freeze" && (
-            <div className="mb-6">
-              <label className="block text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">
+            <div className="mb-8">
+              <label className="block text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">
                 {t("balance.quickAmounts")}
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {quickAmounts.map((qAmount) => (
                   <button
                     key={qAmount}
                     type="button"
                     onClick={() => handleQuickAmount(qAmount)}
-                    className="px-4 py-2 rounded-lg bg-[#1e2434] hover:bg-[#252b3d] border border-gray-700 text-gray-300 font-medium text-sm transition-all hover:scale-105 hover:border-[#ffd700]/50"
+                    className="px-5 py-2.5 rounded-xl bg-[#1e2434] hover:bg-[#252b3d] border border-gray-700 text-gray-300 font-semibold text-sm transition-all hover:scale-105 hover:border-[#ffd700]/50 hover:text-[#ffd700] shadow-md"
                   >
                     +{qAmount} {coin}
                   </button>
@@ -234,39 +232,41 @@ export default function BalanceAdjuster({ userId, onDone }) {
             </div>
           )}
 
-          {/* ENLARGED SUBMIT BUTTON - Main improvement */}
+          {/* MASSIVE SUBMIT BUTTON - Highly visible and easy to click */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-4 rounded-xl font-extrabold text-white shadow-xl transition-all duration-300 flex items-center justify-center gap-3 text-lg ${
-              loading ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02] hover:shadow-2xl"
+            className={`w-full py-5 rounded-xl font-extrabold text-white shadow-2xl transition-all duration-300 flex items-center justify-center gap-4 text-xl ${
+              loading ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98]"
             } bg-gradient-to-r ${config.color}`}
           >
             {loading ? (
               <>
-                <Loader2 className="animate-spin" size={24} />
+                <Loader2 className="animate-spin" size={28} />
                 <span>{t("common.processing")}</span>
               </>
             ) : (
               <>
-                <div className="p-1 rounded-full bg-white/20">
+                <div className="p-2 rounded-full bg-white/20">
                   {config.icon}
                 </div>
-                <span className="tracking-wide">
+                <span className="tracking-wide font-bold">
                   {action === "add" && t("balance.submitAdd")}
                   {action === "reduce" && t("balance.submitReduce")}
                   {action === "freeze" && t("balance.submitFreeze")}
                 </span>
-                <span className="text-white/60 text-sm ml-2">
-                  {amount && parseFloat(amount) > 0 ? `${amount} ${coin}` : ""}
-                </span>
+                {amount && parseFloat(amount) > 0 && (
+                  <span className="text-white/80 text-sm ml-2 font-mono">
+                    {amount} {coin}
+                  </span>
+                )}
               </>
             )}
           </button>
 
           {/* Enhanced Message Display */}
           {msg && (
-            <div className={`mt-4 p-3 rounded-xl font-semibold text-center animate-pulse ${
+            <div className={`mt-5 p-4 rounded-xl font-semibold text-center ${
               msg.includes(t("balance.success")) || msg.includes("success")
                 ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-300"
                 : "bg-red-500/20 border border-red-500/50 text-red-300"

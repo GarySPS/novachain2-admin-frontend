@@ -1,8 +1,7 @@
 // src/components/AdminBalance.jsx
-
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, User, Loader2, Wallet, TrendingUp, Award, Clock, Sparkles } from "lucide-react";
+import { Search, User, Loader2, Wallet, Clock } from "lucide-react";
 import BalanceAdjuster from "./BalanceAdjuster";
 import { API_BASE } from "../config";
 
@@ -65,7 +64,7 @@ export default function AdminBalance() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0e1a] via-[#0f1420] to-[#0a0d16] p-6">
       <div className="max-w-6xl mx-auto">
-        {/* Header with Stats */}
+        {/* Simplified Header without Stats */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="p-3 rounded-2xl bg-gradient-to-br from-[#ffd700]/20 to-[#16d79c]/20">
@@ -76,28 +75,6 @@ export default function AdminBalance() {
                 {t("balance.title")}
               </h1>
               <p className="text-gray-400 mt-1">{t("balance.subtitle")}</p>
-            </div>
-          </div>
-          
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-[#1a1f2e]/50 backdrop-blur rounded-xl p-4 border border-[#ffd700]/10">
-              <div className="flex items-center gap-2 text-gray-400 text-sm">
-                <Award size={16} /> <span>{t("balance.totalUsers")}</span>
-              </div>
-              <div className="text-2xl font-bold text-white mt-1">—</div>
-            </div>
-            <div className="bg-[#1a1f2e]/50 backdrop-blur rounded-xl p-4 border border-[#ffd700]/10">
-              <div className="flex items-center gap-2 text-gray-400 text-sm">
-                <TrendingUp size={16} /> <span>{t("balance.totalVolume")}</span>
-              </div>
-              <div className="text-2xl font-bold text-white mt-1">—</div>
-            </div>
-            <div className="bg-[#1a1f2e]/50 backdrop-blur rounded-xl p-4 border border-[#ffd700]/10">
-              <div className="flex items-center gap-2 text-gray-400 text-sm">
-                <Sparkles size={16} /> <span>{t("balance.activeUsers")}</span>
-              </div>
-              <div className="text-2xl font-bold text-white mt-1">—</div>
             </div>
           </div>
         </div>
