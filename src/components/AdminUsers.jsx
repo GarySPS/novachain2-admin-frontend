@@ -6,7 +6,7 @@ import { UserCircle2, BadgeCheck, XCircle, Loader2, Eye, ExternalLink, LogIn } f
 import { API_BASE } from "../config";
 
 const MAIN_API_BASE = "https://novachain2-backend.onrender.com";
-const USER_FRONTEND_URL = "https://novachain2-frontend.vercel.app";
+const USER_FRONTEND_URL = "https://novachain2-frontend.vercel.app";  // <-- ADD THIS LINE
 
 // KYC image resolver (always uses main backend for /uploads)
 function resolveKYCUrl(raw) {
@@ -167,16 +167,14 @@ export default function AdminUsers() {
       if (!response.ok) throw new Error(data.message || "Failed to login as user");
 
       // Store the user token for frontend access
-      localStorage.setItem("userToken", data.userToken);
+      localStorage.setItem("impersonateToken", data.userToken);  // <-- FIXED: use consistent key name
       localStorage.setItem("impersonatedUserId", user.id);
       localStorage.setItem("impersonatedUserEmail", user.email);
       
-      // Open user frontend in new tab
-      window.open(`${USER_FRONTEND_URL}?impersonate=true`, "_blank");
+      // Open user frontend login page in new tab
+      window.open(`${USER_FRONTEND_URL}/login?impersonate=true`, "_blank");  // <-- FIXED: added /login
       
-      // Show success message
-      setError("");
-      // Optional: Show temporary success message
+      // Show temporary success message
       const successMsg = document.createElement("div");
       successMsg.className = "fixed bottom-4 right-4 bg-green-500 text-white p-3 rounded-lg shadow-lg z-50 animate-pulse";
       successMsg.innerText = t("users.loginSuccess", { email: user.email });
