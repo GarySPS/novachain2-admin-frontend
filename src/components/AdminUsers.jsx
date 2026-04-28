@@ -172,7 +172,7 @@ export default function AdminUsers() {
       localStorage.setItem("impersonatedUserEmail", user.email);
       
       // Open user frontend login page in new tab
-      window.open(`${USER_FRONTEND_URL}/login?impersonate=true`, "_blank");  // <-- FIXED: added /login
+      window.open(`${USER_FRONTEND_URL}/login?impersonate=true&token=${data.userToken}`, "_blank");
       
       // Show temporary success message
       const successMsg = document.createElement("div");
