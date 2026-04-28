@@ -1,5 +1,6 @@
 //src>pages>AdminDashboard.jsx
 import React, { useState } from "react";
+import LanguageSwitcher from "../components/LanguageSwitcher";
 import AdminUsers from "../components/AdminUsers";
 import AdminDeposits from "../components/AdminDeposits";
 import AdminWithdrawals from "../components/AdminWithdrawals";
@@ -8,11 +9,10 @@ import AdminPhone from "../components/AdminPhone";
 import AdminBalance from "../components/AdminBalance";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, DollarSign, Settings, Banknote, PlusCircle, KeyRound, Phone } from "lucide-react"; // Added Phone icon
-
+import { Users, DollarSign, Settings, Banknote, PlusCircle, KeyRound, Phone, ShieldCheck } from "lucide-react";
 const tabList = [
   { key: "users", label: "Users", icon: <Users size={18} className="mr-1 text-[#16d79c]" /> },
-  { key: "phone", label: "Phone", icon: <Phone size={18} className="mr-1 text-sky-400" /> }, // Add this line
+  { key: "phone", label: "Phone", icon: <Phone size={18} className="mr-1 text-sky-400" /> },
   { key: "deposits", label: "Deposits", icon: <DollarSign size={18} className="mr-1 text-[#2dd4bf]" /> },
   { key: "walletSettings", label: "Deposit Settings", icon: <Settings size={18} className="mr-1 text-[#3af0ff]" /> },
   { key: "withdrawals", label: "Withdrawals", icon: <Banknote size={18} className="mr-1 text-[#f34e6d]" /> },
@@ -56,7 +56,13 @@ export default function AdminDashboard() {
             </button>
           ))}
           <div className="flex-1"></div>
-          {/* --- ADD THIS NEW BUTTON --- */}
+          
+          {/* LANGUAGE SWITCHER */}
+          <div className="mr-3">
+            <LanguageSwitcher />
+          </div>
+
+          {/* PASSWORD BUTTON */}
           <button
             onClick={() => setShowPasswordModal(true)}
             className="flex items-center gap-1 px-4 py-2 rounded-xl font-extrabold text-base tracking-wide

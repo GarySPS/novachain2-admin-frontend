@@ -3,11 +3,9 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from "framer-motion";
 import AdminBalance from "./components/AdminBalance"; 
 
-
 import AdminLogin from "./pages/AdminLogin.jsx";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminPhone from "./components/AdminPhone";
-import AdminKYC from "./components/AdminKYC";
 import AdminUsers from "./components/AdminUsers";
 import AdminDeposits from "./components/AdminDeposits";
 import AdminWithdrawals from "./components/AdminWithdrawals";
@@ -69,7 +67,6 @@ function App() {
         <Route path="/dashboard" element={<Protected><AnimatedPage><AdminDashboard /></AnimatedPage></Protected>} />
         <Route path="/phone" element={<Protected><AnimatedPage><AdminPhone /></AnimatedPage></Protected>} />
         <Route path="/users" element={<Protected><AnimatedPage><AdminUsers /></AnimatedPage></Protected>} />
-        <Route path="/kyc" element={<Protected><AnimatedPage><AdminKYC /></AnimatedPage></Protected>} />
         <Route path="/deposits" element={<Protected><AnimatedPage><AdminDeposits /></AnimatedPage></Protected>} />
         <Route path="/withdrawals" element={<Protected><AnimatedPage><AdminWithdrawals /></AnimatedPage></Protected>} />
         <Route path="/settings" element={<Protected><AnimatedPage><DepositWalletSettings /></AnimatedPage></Protected>} />
