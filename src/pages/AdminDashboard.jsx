@@ -1,6 +1,5 @@
-// src/pages/AdminDashboard.jsx
-
-import React, { useState, useEffect } from "react";
+//src>pages>AdminDashboard.jsx
+import React, { useState } from "react";
 import LanguageSwitcher from "../components/LanguageSwitcher";
 import AdminUsers from "../components/AdminUsers";
 import AdminDeposits from "../components/AdminDeposits";
@@ -10,285 +9,193 @@ import AdminPhone from "../components/AdminPhone";
 import AdminBalance from "../components/AdminBalance";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  Users, DollarSign, Settings, Banknote, KeyRound, 
-  Phone, ShieldCheck, LogOut, Sparkles, Activity, Bell,
-  Menu, X, LayoutDashboard, Wallet, ArrowRightLeft, Coins
-} from "lucide-react";
-
+import { Users, DollarSign, Settings, Banknote, PlusCircle, KeyRound, Phone, ShieldCheck } from "lucide-react";
 const tabList = [
-  { key: "users", label: "Users", icon: <Users size={18} />, color: "from-emerald-500 to-teal-500" },
-  { key: "phone", label: "Phone", icon: <Phone size={18} />, color: "from-sky-500 to-blue-500" },
-  { key: "deposits", label: "Deposits", icon: <DollarSign size={18} />, color: "from-cyan-500 to-teal-500" },
-  { key: "walletSettings", label: "Wallet Settings", icon: <Wallet size={18} />, color: "from-indigo-500 to-purple-500" },
-  { key: "withdrawals", label: "Withdrawals", icon: <ArrowRightLeft size={18} />, color: "from-rose-500 to-pink-500" },
-  { key: "balance", label: "Balance", icon: <Coins size={18} />, color: "from-amber-500 to-yellow-600" },
+  { key: "users", label: "Users", icon: <Users size={18} className="mr-1 text-[#16d79c]" /> },
+  { key: "phone", label: "Phone", icon: <Phone size={18} className="mr-1 text-sky-400" /> },
+  { key: "deposits", label: "Deposits", icon: <DollarSign size={18} className="mr-1 text-[#2dd4bf]" /> },
+  { key: "walletSettings", label: "Deposit Settings", icon: <Settings size={18} className="mr-1 text-[#3af0ff]" /> },
+  { key: "withdrawals", label: "Withdrawals", icon: <Banknote size={18} className="mr-1 text-[#f34e6d]" /> },
+  { key: "balance", label: "Adjust Balance", icon: <PlusCircle size={18} className="mr-1 text-[#ffd700]" /> },
 ];
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState(() => {
-    return localStorage.getItem("adminActiveTab") || "users";
-  });
+  const [activeTab, setActiveTab] = useState("users");
   const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [adminInfo, setAdminInfo] = useState({ email: "", role: "admin" });
-
-  useEffect(() => {
-    localStorage.setItem("adminActiveTab", activeTab);
-  }, [activeTab]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("adminToken");
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setAdminInfo({ email: payload.email || payload.sub || "Admin", role: "Administrator" });
-      } catch (e) {
-        setAdminInfo({ email: "Admin", role: "Administrator" });
-      }
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminActiveTab');
-    window.location.href = '/';
-  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0e1a] via-[#0f1420] to-[#0a0d16]">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-[#ffd700]/5 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#16d79c]/5 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-500/5 rounded-full blur-3xl" />
-      </div>
-
-      {/* Top Navigation Bar - Clean layout */}
-      <div className="sticky top-0 z-50 bg-[#0a0e1a]/80 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-[#ffd700]/20 to-[#16d79c]/20">
-                <LayoutDashboard className="w-6 h-6 text-[#ffd700]" />
-              </div>
-              <h1 className="text-xl font-extrabold bg-gradient-to-r from-[#ffd700] to-[#16d79c] bg-clip-text text-transparent">
-                NovaChain Admin
-              </h1>
-            </div>
-
-            {/* Desktop Navigation - Pages Tabs + User Actions in one row */}
-            <div className="hidden lg:flex items-center gap-6">
-              {/* Pages Tabs */}
-              <div className="flex gap-1 bg-[#1a1f2e]/50 rounded-xl p-1 border border-white/10">
-                {tabList.map((tab) => (
-                  <button
-                    key={tab.key}
-                    onClick={() => setActiveTab(tab.key)}
-                    className={`
-                      px-4 py-2 rounded-lg font-bold text-sm transition-all
-                      ${activeTab === tab.key 
-                        ? `bg-gradient-to-r ${tab.color} text-[#181b25] shadow-md` 
-                        : "text-gray-400 hover:text-white hover:bg-white/5"}
-                    `}
-                  >
-                    <span className="flex items-center gap-2">
-                      {tab.icon}
-                      {tab.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-
-              {/* User Actions - Same row as tabs */}
-              <div className="flex items-center gap-2">
-                <div className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10">
-                  <span className="text-sm text-gray-300">
-                    {adminInfo.email}
-                  </span>
-                </div>
-                <LanguageSwitcher />
-                <button
-                  onClick={() => setShowPasswordModal(true)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold text-sm hover:scale-105 transition-all"
-                >
-                  <KeyRound size={14} />
-                  Password
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold text-sm hover:scale-105 transition-all"
-                >
-                  <LogOut size={14} />
-                  Logout
-                </button>
-              </div>
-            </div>
-
-            {/* Mobile Menu Button */}
+    <div className="min-h-screen flex flex-col items-center justify-start pt-2 pb-8">
+      {/* Premium Glass Tab Bar */}
+      <div
+        className="overflow-x-auto flex-nowrap mb-8 bg-gradient-to-r from-[#1a243c]/80 via-[#21253e]/90 to-[#131622]/90 rounded-2xl px-2 py-2 shadow-2xl backdrop-blur-[2.5px] w-full max-w-4xl border border-white/5 items-center no-scrollbar"
+        style={{
+          WebkitOverflowScrolling: "touch",
+          minHeight: 64,
+        }}
+      >
+        <div className="flex flex-nowrap items-center min-w-max">
+          {tabList.map(tab => (
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10"
+              key={tab.key}
+              className={
+                `flex items-center gap-1 px-6 py-2 rounded-xl font-extrabold text-base tracking-wide
+                transition-all duration-200 shadow-md
+                ${activeTab === tab.key 
+                  ? "bg-gradient-to-r from-[#16d79c] via-[#ffd700]/90 to-[#fffbe8] text-[#181b25] shadow-lg scale-105 ring-2 ring-[#ffd70088]" 
+                  : "bg-[#23243a] text-slate-100 hover:bg-[#1f283c] hover:text-[#ffd700]"}
+                `
+              }
+              style={{
+                letterSpacing: 1,
+                boxShadow: activeTab === tab.key ? "0 0 16px #16d79c33" : "none"
+              }}
+              onClick={() => setActiveTab(tab.key)}
             >
-              {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+              {tab.icon}
+              {tab.label}
             </button>
+          ))}
+          <div className="flex-1"></div>
+          
+          {/* LANGUAGE SWITCHER */}
+          <div className="mr-3">
+            <LanguageSwitcher />
           </div>
 
-          {/* Mobile Menu */}
-          <AnimatePresence>
-            {mobileMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="lg:hidden mt-3 pt-3 border-t border-white/10"
-              >
-                {/* Mobile Tabs */}
-                <div className="flex flex-wrap gap-2 mb-3 pb-3 border-b border-white/10">
-                  {tabList.map((tab) => (
-                    <button
-                      key={tab.key}
-                      onClick={() => {
-                        setActiveTab(tab.key);
-                        setMobileMenuOpen(false);
-                      }}
-                      className={`px-3 py-2 rounded-lg font-bold text-sm transition-all ${
-                        activeTab === tab.key
-                          ? `bg-gradient-to-r ${tab.color} text-[#181b25]`
-                          : "bg-[#1e2434] text-gray-400"
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        {tab.icon}
-                        {tab.label}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-                {/* Mobile User Actions */}
-                <div className="flex flex-col gap-2">
-                  <div className="px-3 py-2 rounded-lg bg-white/5">
-                    <span className="text-sm text-gray-300">{adminInfo.email}</span>
-                  </div>
-                  <LanguageSwitcher />
-                  <button
-                    onClick={() => {
-                      setShowPasswordModal(true);
-                      setMobileMenuOpen(false);
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold text-sm"
-                  >
-                    <KeyRound size={16} />
-                    Change Password
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-red-500 to-rose-600 text-white font-semibold text-sm"
-                  >
-                    <LogOut size={16} />
-                    Logout
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* PASSWORD BUTTON */}
+          <button
+            onClick={() => setShowPasswordModal(true)}
+            className="flex items-center gap-1 px-4 py-2 rounded-xl font-extrabold text-base tracking-wide
+             transition-all duration-200 shadow-md mr-3
+             bg-gradient-to-r from-[#3af0ff] via-[#3b82f6] to-[#9333ea]
+             text-white shadow-lg hover:scale-105 hover:ring-2 hover:ring-[#3af0ffbb]"
+            style={{ letterSpacing: 1, minWidth: 120 }}
+          >
+            <KeyRound size={18} />
+            Password
+          </button>
+          {/* --- END OF NEW BUTTON --- */}
+          
+          {/* LOGOUT BUTTON */}
+          <button
+            onClick={() => {
+              localStorage.removeItem('adminToken');
+              window.location.href = '/';
+            }}
+            className="flex items-center gap-1 px-6 py-2 rounded-xl font-extrabold text-base tracking-wide
+              transition-all duration-200 shadow-md
+              bg-gradient-to-r from-[#f34e6d] via-[#ffd700]/80 to-[#16d79c]/80
+              text-[#181b25] shadow-lg hover:scale-105 hover:ring-2 hover:ring-[#ffd700bb]"
+            style={{ letterSpacing: 1, minWidth: 120 }}
+          >
+            {/* Icon (Logout) */}
+            <svg width={20} height={20} fill="none" stroke="#f34e6d" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+              <polyline points="16 17 21 12 16 7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Logout
+          </button>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Content Container */}
-        <motion.div
-          className="relative"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="bg-gradient-to-br from-white/5 via-[#191e29]/80 to-[#181b25]/90 rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
-            <AnimatePresence mode="wait">
-              {activeTab === "users" && (
-                <motion.div
-                  key="users"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                >
-                  <AdminUsers />
-                </motion.div>
-              )}
+      {/* Premium Glass Content Container with animation */}
+      <div
+  className="backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl p-8 min-h-[420px] w-full max-w-6xl mx-auto relative"
+  style={{
+    background: "rgba(24,28,40,0.94)",
+    boxShadow: "0 6px 36px #0007",
+    backdropFilter: "blur(12px)"
+  }}
+>
+        <AnimatePresence mode="wait">
+          {activeTab === "users" && (
+            <motion.div
+              key="users"
+              initial={{ opacity: 0, y: 32 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -32 }}
+              transition={{ duration: 0.32, ease: "easeOut" }}
+              className="w-full"
+            >
+              <AdminUsers />
+            </motion.div>
+          )}
 
-              {activeTab === "phone" && (
-                <motion.div
-                  key="phone"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                >
-                  <AdminPhone />
-                </motion.div>
-              )}
 
-              {activeTab === "deposits" && (
-                <motion.div
-                  key="deposits"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                >
-                  <AdminDeposits />
-                </motion.div>
-              )}
 
-              {activeTab === "walletSettings" && (
-                <motion.div
-                  key="walletSettings"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                >
-                  <DepositWalletSettings />
-                </motion.div>
-              )}
+          {activeTab === "deposits" && (
+            <motion.div
+              key="deposits"
+              initial={{ opacity: 0, y: 32 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -32 }}
+              transition={{ duration: 0.32, ease: "easeOut" }}
+              className="w-full"
+            >
+              <AdminDeposits />
+            </motion.div>
+          )}
 
-              {activeTab === "withdrawals" && (
-                <motion.div
-                  key="withdrawals"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                >
-                  <AdminWithdrawals />
-                </motion.div>
-              )}
+          {activeTab === "walletSettings" && (
+            <motion.div
+              key="walletSettings"
+              initial={{ opacity: 0, y: 32 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -32 }}
+              transition={{ duration: 0.32, ease: "easeOut" }}
+              className="w-full"
+            >
+              <DepositWalletSettings />
+            </motion.div>
+          )}
 
-              {activeTab === "balance" && (
-                <motion.div
-                  key="balance"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                >
-                  <AdminBalance />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </motion.div>
-      </div>
+          {activeTab === "withdrawals" && (
+            <motion.div
+              key="withdrawals"
+              initial={{ opacity: 0, y: 32 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -32 }}
+              transition={{ duration: 0.32, ease: "easeOut" }}
+              className="w-full"
+            >
+              <AdminWithdrawals />
+            </motion.div>
+          )}
 
-      {/* Change Password Modal */}
-      <AnimatePresence>
-        {showPasswordModal && (
-          <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />
-        )}
-      </AnimatePresence>
-    </div>
-  );
+          {activeTab === "balance" && (
+            <motion.div
+              key="balance"
+              initial={{ opacity: 0, y: 32 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -32 }}
+              transition={{ duration: 0.32, ease: "easeOut" }}
+              className="w-full"
+            >
+              <AdminBalance />
+            </motion.div>
+          )}
+{activeTab === "phone" && (
+  <motion.div
+    key="phone"
+    initial={{ opacity: 0, y: 32 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -32 }}
+    transition={{ duration: 0.32, ease: "easeOut" }}
+    className="w-full"
+  >
+    <AdminPhone />
+  </motion.div>
+)}
+        </AnimatePresence>
+      </div>
+
+      <AnimatePresence>
+        {showPasswordModal && (
+          <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />
+        )}
+      </AnimatePresence>
+
+    </div>
+  );
 }
