@@ -1,3 +1,5 @@
+//components>KYCModal.jsx
+
 import React, { useState, useEffect } from "react";
 import { Loader2, BadgeCheck, XCircle, Image, ShieldCheck } from "lucide-react";
 import { API_BASE, MAIN_API_BASE } from "../config";

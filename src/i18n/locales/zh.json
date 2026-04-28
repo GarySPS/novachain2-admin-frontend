@@ -202,7 +202,23 @@
     "updateSuccess": "余额已更新！",
     "fetchBalancesError": "获取余额失败",
     "noBalances": "未找到余额",
-    "searchPlaceholder": "输入用户ID或邮箱"
+    "searchPlaceholder": "输入用户ID或邮箱",
+    "subtitle": "轻松精准地管理用户余额",
+    "totalUsers": "总用户数",
+    "totalVolume": "24小时交易量",
+    "activeUsers": "活跃用户",
+    "searchPrompt": "输入用户ID或邮箱开始搜索",
+    "searchHint": "在上方输入用户ID或邮箱地址",
+    "balance": "可用余额",
+    "frozen": "冻结余额",
+    "addDescription": "增加用户可用余额",
+    "reduceDescription": "扣除用户可用余额",
+    "freezeDescription": "冻结用户指定金额",
+    "add": "增加",
+    "reduce": "减少",
+    "freeze": "冻结",
+    "quickAmounts": "快捷金额"
   }
+    
 
 }

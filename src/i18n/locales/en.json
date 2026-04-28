@@ -206,7 +206,22 @@
     "updateSuccess": "Balance updated!",
     "fetchBalancesError": "Failed to fetch balances",
     "noBalances": "No balances found",
-    "searchPlaceholder": "Enter User ID or Email"
-  }    
+    "searchPlaceholder": "Enter User ID or Email",
+        "subtitle": "Manage user balances with ease and precision",
+    "totalUsers": "Total Users",
+    "totalVolume": "24h Volume",
+    "activeUsers": "Active Users",
+    "searchPrompt": "Search for a user by ID or email to get started",
+    "searchHint": "Enter user ID or email address above",
+    "recentUsers": "Recently Searched Users",
+    "addDescription": "Add funds to user's available balance",
+    "reduceDescription": "Deduct funds from user's available balance",
+    "freezeDescription": "Freeze specific amount from user's balance",
+    "quickAmounts": "Quick Amounts",
+    "add": "Add",
+    "reduce": "Reduce",
+    "freeze": "Freeze"
+  }
+
 
 }
