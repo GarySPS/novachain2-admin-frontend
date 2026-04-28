@@ -149,11 +149,6 @@ export default function BalanceAdjuster({ userId, onDone }) {
                 {t("balance.amount")}
               </label>
               <div className="relative">
-                {amount && (
-                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">
-                    ≈ {parseFloat(amount || 0).toFixed(2)} {coin}
-                  </div>
-                )}
               </div>
             </div>
 
