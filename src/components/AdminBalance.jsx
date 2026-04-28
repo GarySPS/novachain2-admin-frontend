@@ -1,7 +1,7 @@
 // src/components/AdminBalance.jsx
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Search, User, Loader2, Wallet, Clock } from "lucide-react";
+import { Search, User, Loader2, Wallet, Clock, Users, Sparkles } from "lucide-react";
 import BalanceAdjuster from "./BalanceAdjuster";
 import { API_BASE } from "../config";
 
@@ -62,35 +62,41 @@ export default function AdminBalance() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0e1a] via-[#0f1420] to-[#0a0d16] p-6">
-      <div className="max-w-6xl mx-auto">
-        {/* Simplified Header without Stats */}
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 rounded-2xl bg-gradient-to-br from-[#ffd700]/20 to-[#16d79c]/20">
-              <Wallet className="w-8 h-8 text-[#ffd700]" />
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 md:p-8">
+      <div className="max-w-7xl mx-auto">
+        {/* Header Section with better spacing */}
+        <div className="mb-10">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 rounded-2xl bg-gradient-to-br from-amber-400/20 to-emerald-400/20 backdrop-blur-sm">
+                <Wallet className="w-8 h-8 text-amber-400" />
+              </div>
+              <div>
+                <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-amber-400 via-yellow-300 to-emerald-400 bg-clip-text text-transparent">
+                  {t("balance.title")}
+                </h1>
+                <p className="text-slate-400 mt-1 text-lg">{t("balance.subtitle")}</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-4xl font-extrabold bg-gradient-to-r from-[#ffd700] via-[#f0b90b] to-[#16d79c] bg-clip-text text-transparent">
-                {t("balance.title")}
-              </h1>
-              <p className="text-gray-400 mt-1">{t("balance.subtitle")}</p>
+            <div className="flex items-center gap-2 text-sm text-slate-400 bg-slate-800/50 px-4 py-2 rounded-full">
+              <Sparkles size={16} className="text-amber-400" />
+              <span>Precision Balance Management</span>
             </div>
           </div>
         </div>
 
-        {/* Main Card */}
-        <div className="bg-gradient-to-br from-white/5 via-[#191e29]/80 to-[#181b25]/90 rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+        {/* Main Card with improved spacing */}
+        <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl shadow-2xl border border-slate-700/50 overflow-hidden">
           {/* Search Section */}
-          <div className="p-6 border-b border-white/10">
+          <div className="p-6 md:p-8 border-b border-slate-700/50">
             <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Search size={20} className="text-gray-400" />
+                  <Search size={20} className="text-slate-400" />
                 </div>
                 <input
-                  className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-[#ffd700]/20 bg-[#191e29] text-white placeholder-gray-400 focus:outline-none focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700]/20 transition-all text-base"
-                  placeholder={t("balance.searchPlaceholder")}
+                  className="w-full pl-12 pr-4 py-4 rounded-xl bg-slate-800 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all text-base"
+                  placeholder={t("balance.searchPlaceholder") || "Search by User ID or Email..."}
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   autoFocus
@@ -98,7 +104,7 @@ export default function AdminBalance() {
               </div>
               <button
                 type="submit"
-                className="px-8 py-3 bg-gradient-to-r from-[#ffd700] to-[#16d79c] rounded-xl font-bold text-[#181b25] shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2 min-w-[120px]"
+                className="px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 rounded-xl font-bold text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2 min-w-[140px] text-lg"
                 disabled={loading}
               >
                 {loading ? (
@@ -117,17 +123,17 @@ export default function AdminBalance() {
 
             {/* Recent Users Quick Select */}
             {recentUsers.length > 0 && !user && (
-              <div className="mt-4 pt-4 border-t border-white/10">
-                <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
-                  <Clock size={12} />
-                  <span>{t("balance.recentUsers")}</span>
+              <div className="mt-6 pt-6 border-t border-slate-700/50">
+                <div className="flex items-center gap-2 text-sm text-slate-400 mb-3">
+                  <Clock size={14} />
+                  <span className="font-medium">{t("balance.recentUsers") || "Recent Users"}</span>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-3">
                   {recentUsers.map((recent) => (
                     <button
                       key={recent.id}
                       onClick={() => setSearch(String(recent.id))}
-                      className="px-3 py-1.5 rounded-lg bg-[#1e2434] hover:bg-[#252b3d] text-sm text-gray-300 transition-all hover:text-[#ffd700]"
+                      className="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-sm text-slate-300 transition-all hover:text-amber-400 font-medium"
                     >
                       #{recent.id} - {recent.email}
                     </button>
@@ -139,10 +145,10 @@ export default function AdminBalance() {
 
           {/* Error Message */}
           {msg && (
-            <div className={`mx-6 mt-6 p-4 rounded-xl font-semibold ${
+            <div className={`mx-6 md:mx-8 mt-6 p-4 rounded-xl font-semibold ${
               msg.includes(t("balance.userNotFound")) || msg.includes("Error") || msg.includes("Failed")
                 ? "bg-red-500/20 border border-red-500/50 text-red-300"
-                : "bg-green-500/20 border border-green-500/50 text-green-300"
+                : "bg-emerald-500/20 border border-emerald-500/50 text-emerald-300"
             }`}>
               <div className="flex items-center gap-2">
                 {msg.includes(t("balance.userNotFound")) ? <User size={18} /> : null}
@@ -153,26 +159,26 @@ export default function AdminBalance() {
 
           {/* User Info & Balance Adjuster */}
           {user && (
-            <div className="p-6">
-              {/* Enhanced User Card */}
-              <div className="bg-gradient-to-r from-[#232836] to-[#1a1f2a] rounded-xl p-6 mb-6 border border-[#ffd700]/20">
-                <div className="flex flex-wrap justify-between items-center gap-4">
-                  <div className="flex items-center gap-4">
-                    <div className="p-3 rounded-full bg-gradient-to-br from-[#16d79c]/20 to-[#ffd700]/20">
-                      <User size={24} className="text-[#ffd700]" />
+            <div className="p-6 md:p-8">
+              {/* Enhanced User Card with better spacing */}
+              <div className="bg-gradient-to-r from-slate-700/50 to-slate-800/50 rounded-xl p-6 md:p-8 mb-8 border border-amber-400/20">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                  <div className="flex items-center gap-5">
+                    <div className="p-3 rounded-full bg-gradient-to-br from-emerald-400/20 to-amber-400/20">
+                      <User size={28} className="text-amber-400" />
                     </div>
                     <div>
-                      <p className="text-xs text-gray-400 uppercase tracking-wider">{t("balance.userId")}</p>
-                      <p className="font-bold text-white text-2xl font-mono">#{user.id}</p>
+                      <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">{t("balance.userId")}</p>
+                      <p className="font-bold text-white text-3xl font-mono">#{user.id}</p>
                     </div>
                   </div>
                   <div className="flex-1 min-w-[200px]">
-                    <p className="text-xs text-gray-400 uppercase tracking-wider">{t("balance.email")}</p>
-                    <p className="font-medium text-[#ffd700] text-lg break-all">{user.email}</p>
+                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">{t("balance.email")}</p>
+                    <p className="font-medium text-amber-400 text-xl break-all">{user.email}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 uppercase tracking-wider">{t("balance.username")}</p>
-                    <p className="font-medium text-white text-lg">{user.username || user.email?.split('@')[0] || "N/A"}</p>
+                    <p className="text-xs text-slate-400 uppercase tracking-wider mb-1">{t("balance.username")}</p>
+                    <p className="font-medium text-white text-xl">{user.username || user.email?.split('@')[0] || "N/A"}</p>
                   </div>
                 </div>
               </div>
@@ -182,14 +188,14 @@ export default function AdminBalance() {
             </div>
           )}
 
-          {/* Empty State */}
+          {/* Empty State - More inviting */}
           {!user && !msg && (
-            <div className="p-12 text-center">
-              <div className="inline-flex p-4 rounded-full bg-[#1e2434] mb-4">
-                <User size={32} className="text-gray-500" />
+            <div className="p-12 md:p-20 text-center">
+              <div className="inline-flex p-6 rounded-full bg-slate-700/50 mb-6">
+                <Users size={48} className="text-slate-500" />
               </div>
-              <p className="text-gray-400 text-lg">{t("balance.searchPrompt")}</p>
-              <p className="text-gray-500 text-sm mt-2">{t("balance.searchHint")}</p>
+              <p className="text-slate-300 text-xl font-medium mb-2">{t("balance.searchPrompt") || "Search for a user to manage balances"}</p>
+              <p className="text-slate-500 text-base">{t("balance.searchHint") || "Enter user ID or email address above"}</p>
             </div>
           )}
         </div>

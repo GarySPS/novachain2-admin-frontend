@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { Loader2, Plus, Minus, Snowflake, Coins, TrendingUp, AlertCircle, Zap } from "lucide-react";
+import { Loader2, Plus, Minus, Snowflake, Coins, TrendingUp, AlertCircle, Zap, DollarSign, ArrowUpCircle, ArrowDownCircle } from "lucide-react";
 import { API_BASE } from "../config";
 import UserBalanceTable from "./UserBalanceTable";
 
@@ -22,33 +22,39 @@ export default function BalanceAdjuster({ userId, onDone }) {
     switch(action) {
       case "add": 
         return { 
-          icon: <Plus size={22} />, 
+          icon: <Plus size={24} />, 
           title: t("balance.addBalance"),
+          submitText: "Add Funds",
           color: "from-emerald-500 to-green-600",
           hoverColor: "from-emerald-600 to-green-700",
-          gradient: "bg-gradient-to-r from-emerald-500/20 to-green-600/20",
+          gradient: "bg-gradient-to-r from-emerald-500/10 to-green-600/10",
           borderColor: "border-emerald-500/30",
-          textColor: "text-emerald-400"
+          textColor: "text-emerald-400",
+          bgLight: "bg-emerald-500/10"
         };
       case "reduce": 
         return { 
-          icon: <Minus size={22} />, 
+          icon: <Minus size={24} />, 
           title: t("balance.reduceBalance"),
+          submitText: "Reduce Funds",
           color: "from-orange-500 to-red-600",
           hoverColor: "from-orange-600 to-red-700",
-          gradient: "bg-gradient-to-r from-orange-500/20 to-red-600/20",
+          gradient: "bg-gradient-to-r from-orange-500/10 to-red-600/10",
           borderColor: "border-orange-500/30",
-          textColor: "text-orange-400"
+          textColor: "text-orange-400",
+          bgLight: "bg-orange-500/10"
         };
       case "freeze": 
         return { 
-          icon: <Snowflake size={22} />, 
+          icon: <Snowflake size={24} />, 
           title: t("balance.freezeBalance"),
+          submitText: "Freeze Funds",
           color: "from-blue-500 to-cyan-600",
           hoverColor: "from-blue-600 to-cyan-700",
-          gradient: "bg-gradient-to-r from-blue-500/20 to-cyan-600/20",
+          gradient: "bg-gradient-to-r from-blue-500/10 to-cyan-600/10",
           borderColor: "border-blue-500/30",
-          textColor: "text-blue-400"
+          textColor: "text-blue-400",
+          bgLight: "bg-blue-500/10"
         };
       default: return {};
     }
@@ -97,110 +103,123 @@ export default function BalanceAdjuster({ userId, onDone }) {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Main Action Card */}
-      <div className={`bg-gradient-to-br from-[#1a1f2e] to-[#131724] rounded-2xl shadow-2xl overflow-hidden border ${config.borderColor} transition-all duration-300`}>
-        {/* Header with Gradient */}
-        <div className={`${config.gradient} px-6 py-4 border-b ${config.borderColor}`}>
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-xl ${config.color.replace('from-', 'bg-').replace('to-', 'bg-')} bg-opacity-20`}>
+    <div className="space-y-8">
+      {/* Main Action Card - Clean and spacious */}
+      <div className={`bg-slate-800/40 rounded-2xl shadow-xl overflow-hidden border ${config.borderColor} transition-all duration-300`}>
+        {/* Header */}
+        <div className={`${config.gradient} px-6 md:px-8 py-5 border-b ${config.borderColor}`}>
+          <div className="flex items-center gap-4">
+            <div className={`p-3 rounded-xl ${config.bgLight}`}>
               {config.icon}
             </div>
             <div>
-              <h3 className="text-xl font-bold text-white flex items-center gap-2">
+              <h3 className="text-2xl font-bold text-white flex items-center gap-3">
                 {config.title}
-                <span className="text-xs font-normal text-gray-400">• {t("balance.adjustTitle")}</span>
+                <span className="text-sm font-normal text-slate-400">• Adjust Balance</span>
               </h3>
-              <p className="text-sm text-gray-400 mt-0.5">
-                {action === "add" && t("balance.addDescription")}
-                {action === "reduce" && t("balance.reduceDescription")}
-                {action === "freeze" && t("balance.freezeDescription")}
+              <p className="text-sm text-slate-400 mt-1">
+                {action === "add" && "Add funds to user's available balance"}
+                {action === "reduce" && "Deduct funds from user's balance"}
+                {action === "freeze" && "Lock funds in user's account"}
               </p>
             </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6">
-          {/* 3-Column Grid for Controls */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <form onSubmit={handleSubmit} className="p-6 md:p-8">
+          {/* 3-Column Grid for Controls with better spacing */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {/* Coin Selection */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-                <Coins size={16} className="text-[#ffd700]" />
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                <Coins size={18} className="text-amber-400" />
                 {t("balance.coin")}
               </label>
               <select
                 value={coin}
                 onChange={e => setCoin(e.target.value)}
-                className="w-full bg-[#1e2434] border-2 border-gray-700 rounded-xl px-4 py-3 text-white font-medium focus:outline-none focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700]/20 transition-all cursor-pointer hover:bg-[#252b3d]"
+                className="w-full bg-slate-700 border-2 border-slate-600 rounded-xl px-5 py-4 text-white font-medium focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all cursor-pointer hover:bg-slate-600 text-base"
               >
                 <option value="USDT">💵 USDT (Tether)</option>
                 <option value="USDC">💎 USDC (USD Coin)</option>
                 <option value="BTC">₿ Bitcoin (BTC)</option>
                 <option value="ETH">Ξ Ethereum (ETH)</option>
                 <option value="BNB">🔶 Binance Coin (BNB)</option>
+                <option value="SOL">◎ Solana (SOL)</option>
+                <option value="XRP">✖ Ripple (XRP)</option>
               </select>
             </div>
 
-            {/* Amount Input with Quick Actions */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-                <TrendingUp size={16} className="text-[#ffd700]" />
+            {/* Amount Input - Now with proper input box! */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                <TrendingUp size={18} className="text-amber-400" />
                 {t("balance.amount")}
               </label>
               <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <DollarSign size={20} className="text-slate-400" />
+                </div>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="w-full pl-12 pr-4 py-4 bg-slate-700 border-2 border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all text-lg"
+                  placeholder="Enter amount..."
+                />
               </div>
             </div>
 
-            {/* Action Selection - ENLARGED BUTTONS */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-300 mb-2 flex items-center gap-2">
-                <Zap size={16} className="text-[#ffd700]" />
+            {/* Action Selection - LARGE, EASY TO CLICK BUTTONS */}
+            <div className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-semibold text-slate-300">
+                <Zap size={18} className="text-amber-400" />
                 {t("balance.action")}
               </label>
               <div className="grid grid-cols-3 gap-3">
                 <button
                   type="button"
                   onClick={() => setAction("add")}
-                  className={`py-3.5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
+                  className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
                     action === "add" 
                       ? "bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg scale-105 ring-2 ring-emerald-400/50"
-                      : "bg-[#1e2434] text-gray-400 hover:bg-[#252b3d] hover:text-emerald-400 border border-gray-700 hover:border-emerald-500/50"
+                      : "bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-emerald-400 border border-slate-600 hover:border-emerald-500/50"
                   }`}
                 >
-                  <Plus size={18} /> {t("balance.add")}
+                  <Plus size={18} /> Add
                 </button>
                 <button
                   type="button"
                   onClick={() => setAction("reduce")}
-                  className={`py-3.5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
+                  className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
                     action === "reduce" 
                       ? "bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg scale-105 ring-2 ring-orange-400/50"
-                      : "bg-[#1e2434] text-gray-400 hover:bg-[#252b3d] hover:text-orange-400 border border-gray-700 hover:border-orange-500/50"
+                      : "bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-orange-400 border border-slate-600 hover:border-orange-500/50"
                   }`}
                 >
-                  <Minus size={18} /> {t("balance.reduce")}
+                  <Minus size={18} /> Reduce
                 </button>
                 <button
                   type="button"
                   onClick={() => setAction("freeze")}
-                  className={`py-3.5 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
+                  className={`py-4 rounded-xl font-bold text-base transition-all flex items-center justify-center gap-2 ${
                     action === "freeze" 
                       ? "bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-lg scale-105 ring-2 ring-blue-400/50"
-                      : "bg-[#1e2434] text-gray-400 hover:bg-[#252b3d] hover:text-blue-400 border border-gray-700 hover:border-blue-500/50"
+                      : "bg-slate-700 text-slate-300 hover:bg-slate-600 hover:text-blue-400 border border-slate-600 hover:border-blue-500/50"
                   }`}
                 >
-                  <Snowflake size={18} /> {t("balance.freeze")}
+                  <Snowflake size={18} /> Freeze
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Quick Amount Buttons - VISUALLY ENHANCED */}
+          {/* Quick Amount Buttons - Large and touch-friendly */}
           {action !== "freeze" && (
             <div className="mb-8">
-              <label className="block text-xs font-semibold text-gray-400 mb-3 uppercase tracking-wider">
-                {t("balance.quickAmounts")}
+              <label className="block text-xs font-semibold text-slate-400 mb-4 uppercase tracking-wider">
+                {t("balance.quickAmounts") || "QUICK AMOUNTS"}
               </label>
               <div className="flex flex-wrap gap-3">
                 {quickAmounts.map((qAmount) => (
@@ -208,7 +227,7 @@ export default function BalanceAdjuster({ userId, onDone }) {
                     key={qAmount}
                     type="button"
                     onClick={() => handleQuickAmount(qAmount)}
-                    className="px-5 py-2.5 rounded-xl bg-[#1e2434] hover:bg-[#252b3d] border border-gray-700 text-gray-300 font-semibold text-sm transition-all hover:scale-105 hover:border-[#ffd700]/50 hover:text-[#ffd700] shadow-md"
+                    className="px-6 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-300 font-bold text-base transition-all hover:scale-105 hover:border-amber-400/50 hover:text-amber-400 shadow-md"
                   >
                     +{qAmount} {coin}
                   </button>
@@ -221,7 +240,7 @@ export default function BalanceAdjuster({ userId, onDone }) {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-5 rounded-xl font-extrabold text-white shadow-2xl transition-all duration-300 flex items-center justify-center gap-4 text-xl ${
+            className={`w-full py-6 rounded-xl font-extrabold text-white shadow-2xl transition-all duration-300 flex items-center justify-center gap-4 text-xl ${
               loading ? "opacity-50 cursor-not-allowed" : "hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98]"
             } bg-gradient-to-r ${config.color}`}
           >
@@ -233,16 +252,18 @@ export default function BalanceAdjuster({ userId, onDone }) {
             ) : (
               <>
                 <div className="p-2 rounded-full bg-white/20">
-                  {config.icon}
+                  {action === "add" && <ArrowUpCircle size={24} />}
+                  {action === "reduce" && <ArrowDownCircle size={24} />}
+                  {action === "freeze" && <Snowflake size={24} />}
                 </div>
-                <span className="tracking-wide font-bold">
-                  {action === "add" && t("balance.submitAdd")}
-                  {action === "reduce" && t("balance.submitReduce")}
-                  {action === "freeze" && t("balance.submitFreeze")}
+                <span className="tracking-wide font-bold text-lg">
+                  {action === "add" && `${config.submitText} to ${coin}`}
+                  {action === "reduce" && `${config.submitText} from ${coin}`}
+                  {action === "freeze" && `${config.submitText} in ${coin}`}
                 </span>
                 {amount && parseFloat(amount) > 0 && (
-                  <span className="text-white/80 text-sm ml-2 font-mono">
-                    {amount} {coin}
+                  <span className="text-white/80 text-base ml-2 font-mono bg-white/10 px-3 py-1 rounded-full">
+                    {parseFloat(amount).toLocaleString()} {coin}
                   </span>
                 )}
               </>
@@ -251,7 +272,7 @@ export default function BalanceAdjuster({ userId, onDone }) {
 
           {/* Enhanced Message Display */}
           {msg && (
-            <div className={`mt-5 p-4 rounded-xl font-semibold text-center ${
+            <div className={`mt-6 p-5 rounded-xl font-semibold text-center ${
               msg.includes(t("balance.success")) || msg.includes("success")
                 ? "bg-emerald-500/20 border border-emerald-500/50 text-emerald-300"
                 : "bg-red-500/20 border border-red-500/50 text-red-300"
@@ -271,12 +292,12 @@ export default function BalanceAdjuster({ userId, onDone }) {
         </form>
       </div>
 
-      {/* Balance Table Section */}
-      <div className="bg-[#1a1f2e] rounded-2xl shadow-xl overflow-hidden border border-gray-800">
-        <div className="px-6 py-4 bg-gradient-to-r from-[#1e2434] to-[#1a1f2e] border-b border-gray-800">
-          <div className="flex items-center gap-2">
-            <Coins size={20} className="text-[#ffd700]" />
-            <h4 className="text-white font-bold text-lg">{t("balance.userBalances")}</h4>
+      {/* Balance Table Section - Clean and readable */}
+      <div className="bg-slate-800/40 rounded-2xl shadow-xl overflow-hidden border border-slate-700/50">
+        <div className="px-6 md:px-8 py-5 bg-slate-800/60 border-b border-slate-700/50">
+          <div className="flex items-center gap-3">
+            <Coins size={22} className="text-amber-400" />
+            <h4 className="text-white font-bold text-xl">{t("balance.userBalances") || "User Balances"}</h4>
           </div>
         </div>
         <UserBalanceTable userId={userId} refresh={refresh} />
