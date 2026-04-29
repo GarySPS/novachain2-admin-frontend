@@ -37,6 +37,7 @@ export default function AdminDashboard() {
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminRole');
     window.location.href = '/';
   };
 
@@ -52,7 +53,15 @@ export default function AdminDashboard() {
       >
         <div className="flex flex-nowrap items-center gap-1 sm:gap-2 md:gap-3 min-w-max">
           {/* Tabs - Responsive padding and sizing */}
-          {tabList.map(tab => (
+          {tabList
+            .filter(tab => {
+              // If the tab is walletSettings, only show it if role is superadmin
+              if (tab.key === "walletSettings") {
+                return localStorage.getItem('adminRole') === 'superadmin';
+              }
+              return true; // Show all other tabs to everyone
+            })
+            .map(tab => (
             <button
               key={tab.key}
               className={`

@@ -30,6 +30,7 @@ export default function AdminLogin() {
       if (!response.ok) setError(data.message || 'Login failed.');
       else {
         localStorage.setItem('adminToken', data.token);
+        localStorage.setItem('adminRole', data.role); // Save the role (superadmin/support)
         window.location.href = '/dashboard';
       }
     } catch {
