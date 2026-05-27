@@ -191,9 +191,17 @@ export default function AdminDeposits() {
                 const screenshotData = getScreenshotUrl(d.screenshot);
                 
                 return (
-                  <tr key={`deposit-${d.id || idx}-${d.user_id || "x"}`}>
+<tr key={`deposit-${d.id || idx}-${d.user_id || "x"}`}>
                     <td className="font-mono text-xs">{d.id}</td>
-                    <td className="font-medium">{d.user_id}</td>
+                    <td className="font-medium">
+                      <div className="flex flex-col">
+                        <span className="text-[#ffd700]">#{d.user_id}</span>
+                        {/* Note: Your backend /api/deposits needs to include the email field for this to show up */}
+                        <span className="text-xs text-slate-400">
+                          {d.user_email || d.email || "Email not provided by API"}
+                        </span>
+                      </div>
+                    </td>
                     <td className="font-bold text-sm">{d.coin || "USDT"}</td>
                     <td>
                       <span className="font-bold text-[#FFD700]">
