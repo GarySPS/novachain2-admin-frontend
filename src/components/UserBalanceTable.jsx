@@ -12,23 +12,55 @@ export default function UserBalanceTable({ userId, refresh }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const token = localStorage.getItem("adminToken");
 
   useEffect(() => {
     if (!userId) return;
+
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+
+    if (!token) {
+      setLoading(false);
+      setError("Admin session expired. Please login again.");
+      return;
+    }
+
     setLoading(true);
     setError("");
+
     axios
       .get(`${API_BASE}/api/admin/user/${userId}/balances`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setBalances(res.data.balances || []))
-      .catch(() => setError(t("balance.fetchBalancesError")))
+      .catch((err) =>
+        setError(err.response?.data?.message || t("balance.fetchBalancesError"))
+      )
       .finally(() => setLoading(false));
   }, [userId, refresh, t]);
 
-  const totalBalance = balances.reduce((sum, b) => sum + (parseFloat(b.balance) || 0), 0);
-  const totalFrozen = balances.reduce((sum, b) => sum + (parseFloat(b.frozen) || 0), 0);
+    const formatCoinAmount = (value) => {
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+      return "0.0000";
+    }
+
+    return number.toLocaleString(undefined, {
+      minimumFractionDigits: 4,
+      maximumFractionDigits: 8,
+    });
+  };
+
+  const totalBalance = balances.reduce(
+    (sum, b) => sum + (Number(b.balance) || 0),
+    0
+  );
+
+  const totalFrozen = balances.reduce(
+    (sum, b) => sum + (Number(b.frozen) || 0),
+    0
+  );
 
   return (
     <div className="bg-[#1e2434] rounded-xl shadow-lg p-5 overflow-x-auto">
@@ -72,13 +104,13 @@ export default function UserBalanceTable({ userId, refresh }) {
           </thead>
           <tbody>
             {balances.map((b, i) => (
-              <tr key={i} className="border-b border-gray-700/50 hover:bg-white/5 transition-colors">
+              <tr key={b.coin || i} className="border-b border-gray-700/50 hover:bg-white/5 transition-colors">
                 <td className="px-4 py-3 font-bold text-[#ffd700]">{b.coin}</td>
                 <td className="px-4 py-3 text-right font-mono">
-                  {parseFloat(b.balance).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 8 })}
+                  {formatCoinAmount(b.balance)}
                 </td>
                 <td className="px-4 py-3 text-right font-mono text-blue-400">
-                  {parseFloat(b.frozen).toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 8 })}
+                  {formatCoinAmount(b.frozen)}
                 </td>
               </tr>
             ))}

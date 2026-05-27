@@ -16,7 +16,8 @@ export default function BalanceAdjuster({ userId, onDone }) {
   const [refresh, setRefresh] = useState(0);
   const [quickAmounts] = useState([10, 50, 100, 500, 1000]);
 
-  const token = localStorage.getItem("adminToken");
+  const token =
+  typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
 
   const getActionConfig = () => {
     switch(action) {
@@ -229,7 +230,7 @@ export default function BalanceAdjuster({ userId, onDone }) {
                     onClick={() => handleQuickAmount(qAmount)}
                     className="px-6 py-3 rounded-xl bg-slate-700 hover:bg-slate-600 border border-slate-600 text-slate-300 font-bold text-base transition-all hover:scale-105 hover:border-amber-400/50 hover:text-amber-400 shadow-md"
                   >
-                    +{qAmount} {coin}
+                    {action === "reduce" ? "-" : "+"}{qAmount} {coin}
                   </button>
                 ))}
               </div>
