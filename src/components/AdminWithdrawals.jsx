@@ -207,9 +207,16 @@ export default function AdminWithdrawals() {
               {filteredWithdrawals.map((w, idx) => {
                 const statusBadge = getStatusBadge(w.status);
                 return (
-                  <tr key={`withdrawal-${w.id || idx}`}>
+                   <tr key={`withdrawal-${w.id || idx}`}>
                     <td className="font-mono text-sm">{w.id}</td>
-                    <td className="font-medium">{w.user_id}</td>
+                    <td className="font-medium">
+                      <div className="flex flex-col">
+                        <span className="text-[#ffd700]">#{w.user_id}</span>
+                        <span className="text-xs text-slate-400">
+                          {w.user_email || w.email || "Email not provided by API"}
+                        </span>
+                      </div>
+                    </td>
                     <td className="font-bold text-sm">{w.coin || "USDT"}</td>
                     <td>
                       <span className="font-bold text-[#FFD700]">
