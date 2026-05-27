@@ -1,9 +1,9 @@
-//src>components>UserBalanceTable.jsx
+// src/components/UserBalanceTable.jsx
 
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import axios from "axios";
-import { Loader2, Coins, Snowflake } from "lucide-react";
+import { Loader2, Snowflake } from "lucide-react";
 import { API_BASE } from "../config";
 
 export default function UserBalanceTable({ userId, refresh }) {
@@ -12,12 +12,10 @@ export default function UserBalanceTable({ userId, refresh }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-
   useEffect(() => {
     if (!userId) return;
 
-    const token =
-      typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+    const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
 
     if (!token) {
       setLoading(false);
@@ -39,13 +37,11 @@ export default function UserBalanceTable({ userId, refresh }) {
       .finally(() => setLoading(false));
   }, [userId, refresh, t]);
 
-    const formatCoinAmount = (value) => {
+  const formatCoinAmount = (value) => {
     const number = Number(value);
-
     if (!Number.isFinite(number)) {
       return "0.0000";
     }
-
     return number.toLocaleString(undefined, {
       minimumFractionDigits: 4,
       maximumFractionDigits: 8,
@@ -63,59 +59,65 @@ export default function UserBalanceTable({ userId, refresh }) {
   );
 
   return (
-    <div className="bg-[#1e2434] rounded-xl shadow-lg p-5 overflow-x-auto">
-      <div className="flex flex-wrap justify-between items-center mb-4">
-        <h3 className="text-lg font-bold text-[#ffd700] flex items-center gap-2">
-          <Coins size={18} />
-          {t("balance.userBalances")}
-        </h3>
-        {!loading && balances.length > 0 && (
-          <div className="flex gap-3 text-xs">
-            <span className="text-green-400">
-              {t("balance.totalBalance")}: {totalBalance.toFixed(4)}
-            </span>
-            <span className="text-blue-400">
-              {t("balance.totalFrozen")}: {totalFrozen.toFixed(4)}
-            </span>
-          </div>
-        )}
-      </div>
+    <div className="w-full">
+      {/* Total Stats Bar */}
+      {!loading && balances.length > 0 && (
+        <div className="flex flex-wrap gap-4 px-6 py-3 bg-white/5 border-b border-white/5 text-[11px] font-bold uppercase tracking-wider">
+          <span className="text-emerald-400 flex items-center gap-1">
+            {t("balance.totalBalance")}: <span className="font-mono">{totalBalance.toFixed(4)}</span>
+          </span>
+          <span className="text-sky-400 flex items-center gap-1">
+            {t("balance.totalFrozen")}: <span className="font-mono">{totalFrozen.toFixed(4)}</span>
+          </span>
+        </div>
+      )}
 
       {loading ? (
-        <div className="flex justify-center items-center py-8">
-          <Loader2 className="animate-spin text-[#ffd700] mr-2" size={24} />
-          <span className="text-gray-400">{t("common.loading")}</span>
+        <div className="flex justify-center items-center py-10">
+          <Loader2 className="animate-spin text-[#ffd700] mr-2" size={20} />
+          <span className="text-gray-400 text-sm font-medium">{t("common.loading")}</span>
         </div>
       ) : error ? (
-        <div className="text-center py-8 text-red-400">{error}</div>
+        <div className="text-center py-8 text-rose-400 text-sm font-bold bg-rose-500/10">
+          {error}
+        </div>
       ) : balances.length === 0 ? (
-        <div className="text-center py-8 text-gray-400">{t("balance.noBalances")}</div>
+        <div className="text-center py-10 text-gray-500 text-sm">
+          {t("balance.noBalances")}
+        </div>
       ) : (
-        <table className="min-w-full text-white">
-          <thead>
-            <tr className="bg-[#282c3e]">
-              <th className="px-4 py-2 text-left rounded-l-lg">{t("balance.coin")}</th>
-              <th className="px-4 py-2 text-right">{t("balance.balance")}</th>
-              <th className="px-4 py-2 text-right rounded-r-lg flex items-center justify-end gap-1">
-                <Snowflake size={14} />
-                {t("balance.frozen")}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {balances.map((b, i) => (
-              <tr key={b.coin || i} className="border-b border-gray-700/50 hover:bg-white/5 transition-colors">
-                <td className="px-4 py-3 font-bold text-[#ffd700]">{b.coin}</td>
-                <td className="px-4 py-3 text-right font-mono">
-                  {formatCoinAmount(b.balance)}
-                </td>
-                <td className="px-4 py-3 text-right font-mono text-blue-400">
-                  {formatCoinAmount(b.frozen)}
-                </td>
+        <div className="overflow-x-auto">
+          {/* Using the global admin-table class to match other pages */}
+          <table className="admin-table w-full">
+            <thead>
+              <tr>
+                <th>{t("balance.coin")}</th>
+                <th className="text-right">{t("balance.balance")}</th>
+                <th className="text-right">
+                  <div className="flex items-center justify-end gap-1">
+                    <Snowflake size={12} />
+                    {t("balance.frozen")}
+                  </div>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {balances.map((b, i) => (
+                <tr key={b.coin || i}>
+                  <td className="font-bold text-gray-300">
+                    {b.coin}
+                  </td>
+                  <td className="text-right font-mono text-emerald-400 font-medium">
+                    {formatCoinAmount(b.balance)}
+                  </td>
+                  <td className="text-right font-mono text-sky-400 font-medium">
+                    {formatCoinAmount(b.frozen)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

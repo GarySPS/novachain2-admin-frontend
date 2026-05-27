@@ -75,15 +75,15 @@ export default function AdminWithdrawals() {
   const getStatusBadge = (status) => {
     switch(status) {
       case "approved":
-        return { icon: <CheckCircle2 size={14} />, text: t("withdrawals.approved"), className: "text-green-400 bg-green-500/10 border-green-500/30" };
+        return { icon: <CheckCircle2 size={14} />, text: t("withdrawals.approved"), className: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" };
       case "pending":
-        return { icon: <Loader2 size={14} className="animate-spin" />, text: t("withdrawals.pending"), className: "text-yellow-300 bg-yellow-500/10 border-yellow-500/30" };
+        return { icon: <Loader2 size={14} className="animate-spin" />, text: t("withdrawals.pending"), className: "text-amber-400 bg-amber-500/10 border-amber-500/20" };
       case "rejected":
-        return { icon: <XCircle size={14} />, text: t("withdrawals.rejected"), className: "text-red-400 bg-red-500/10 border-red-500/30" };
+        return { icon: <XCircle size={14} />, text: t("withdrawals.rejected"), className: "text-rose-400 bg-rose-500/10 border-rose-500/20" };
       case "completed":
-        return { icon: <BadgeCheck size={14} />, text: t("withdrawals.completed"), className: "text-blue-400 bg-blue-500/10 border-blue-500/30" };
+        return { icon: <BadgeCheck size={14} />, text: t("withdrawals.completed"), className: "text-sky-400 bg-sky-500/10 border-sky-500/20" };
       default:
-        return { icon: null, text: status || t("common.na"), className: "text-gray-400 bg-gray-500/10 border-gray-500/30" };
+        return { icon: null, text: status || t("common.na"), className: "text-gray-400 bg-gray-500/10 border-gray-500/20" };
     }
   };
 
@@ -97,72 +97,70 @@ export default function AdminWithdrawals() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto mt-10 px-2 sm:px-6 py-8 rounded-2xl shadow-2xl bg-gradient-to-br from-white/5 via-[#191e29]/80 to-[#181b25]/90 border border-white/5">
-      {/* Header */}
-      <div className="flex flex-wrap justify-between items-center mb-6 gap-4">
-        <h2 className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-[#ffd700]">
-          <ArrowUpRight size={24} className="text-[#16d79c]" />
+    <div className="w-full animate-fade-in">
+      {/* Sleek Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+        <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+          <ArrowUpRight size={20} className="text-gray-400" />
           {t("withdrawals.title")}
         </h2>
         
-        {/* Stats Summary */}
-        <div className="flex gap-3 flex-wrap">
-          <div className="px-3 py-1 rounded-lg bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/30">
-            <span className="text-xs text-purple-400">{t("withdrawals.totalAmount")}</span>
+        {/* Flat Stats Cards */}
+        <div className="flex flex-wrap gap-2">
+          <div className="px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20 flex flex-col items-center min-w-[80px]">
+            <span className="text-[10px] uppercase font-bold text-purple-400">{t("withdrawals.totalAmount")}</span>
             <p className="font-bold text-purple-300 text-sm">
               {stats.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
             </p>
           </div>
-          <div className="px-3 py-1 rounded-lg bg-blue-500/10 border border-blue-500/30">
-            <span className="text-xs text-blue-400">{t("withdrawals.total")}</span>
-            <p className="font-bold text-blue-300">{stats.total}</p>
+          <div className="px-3 py-1.5 rounded-lg bg-sky-500/10 border border-sky-500/20 flex flex-col items-center min-w-[80px]">
+            <span className="text-[10px] uppercase font-bold text-sky-400">{t("withdrawals.total")}</span>
+            <p className="font-bold text-sky-300 text-sm">{stats.total}</p>
           </div>
-          <div className="px-3 py-1 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
-            <span className="text-xs text-yellow-400">{t("withdrawals.pending")}</span>
-            <p className="font-bold text-yellow-300">{stats.pending}</p>
+          <div className="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 flex flex-col items-center min-w-[80px]">
+            <span className="text-[10px] uppercase font-bold text-amber-400">{t("withdrawals.pending")}</span>
+            <p className="font-bold text-amber-300 text-sm">{stats.pending}</p>
           </div>
-          <div className="px-3 py-1 rounded-lg bg-green-500/10 border border-green-500/30">
-            <span className="text-xs text-green-400">{t("withdrawals.approved")}</span>
-            <p className="font-bold text-green-300">{stats.approved + stats.completed}</p>
+          <div className="px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex flex-col items-center min-w-[80px]">
+            <span className="text-[10px] uppercase font-bold text-emerald-400">{t("withdrawals.approved")}</span>
+            <p className="font-bold text-emerald-300 text-sm">{stats.approved + stats.completed}</p>
           </div>
         </div>
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="flex flex-wrap gap-3 mb-4">
-        <div className="flex-1 min-w-[200px]">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder={t("withdrawals.searchPlaceholder")}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-2 rounded-xl border border-[#232836] bg-[#191e29] text-white placeholder-gray-400 focus:outline-none focus:border-[#16d79c] transition-colors"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
-              >
-                <XCircle size={16} />
-              </button>
-            )}
-          </div>
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="relative w-full sm:w-64">
+          <input
+            type="text"
+            placeholder={t("withdrawals.searchPlaceholder")}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full px-4 py-2 rounded-xl border border-white/10 bg-white/5 text-white text-sm focus:outline-none focus:border-[#ffd700] transition-colors"
+          />
+          {searchTerm && (
+            <button
+              onClick={() => setSearchTerm("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+            >
+              <XCircle size={16} />
+            </button>
+          )}
         </div>
         
-        <div className="flex gap-2 overflow-x-auto pb-2">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
           {["all", "pending", "approved", "completed", "rejected"].map((filterType) => (
             <button
               key={filterType}
               onClick={() => setFilter(filterType)}
-              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all whitespace-nowrap ${
+              className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors whitespace-nowrap ${
                 filter === filterType
-                  ? "bg-gradient-to-r from-[#16d79c] to-[#ffd700] text-[#181b25] shadow-lg"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
+                  ? "bg-white/10 text-[#ffd700] border border-white/10"
+                  : "bg-transparent text-gray-400 hover:text-white hover:bg-white/5 border border-transparent"
               }`}
             >
               <span className="flex items-center gap-1">
-                <Filter size={14} />
+                <Filter size={12} />
                 {t(`withdrawals.filters.${filterType}`)}
               </span>
             </button>
@@ -171,18 +169,18 @@ export default function AdminWithdrawals() {
       </div>
       
       {error && (
-        <div className="bg-gradient-to-r from-[#f34e6d]/90 to-[#fbbf24]/80 text-white p-3 rounded-lg mb-4 font-semibold shadow">
+        <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 px-4 py-3 rounded-xl mb-6 text-sm font-medium">
           {error}
         </div>
       )}
       
       {loading ? (
         <div className="flex justify-center items-center py-16">
-          <Loader2 className="animate-spin text-[#FFD700] mr-2" size={30} />
-          <span className="text-yellow-200 font-bold">{t("common.loading")}</span>
+          <Loader2 className="animate-spin text-[#FFD700] mr-2" size={24} />
+          <span className="text-gray-400 font-medium">{t("common.loading")}</span>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl">
+        <div className="overflow-x-auto rounded-xl border border-white/5 bg-[#131722]/50 backdrop-blur-sm">
           <table className="admin-table min-w-[1000px]">
             <thead>
               <tr>
@@ -197,89 +195,76 @@ export default function AdminWithdrawals() {
               </tr>
             </thead>
             <tbody>
-              {filteredWithdrawals.length === 0 && (
+              {filteredWithdrawals.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-gray-400 font-semibold">
+                  <td colSpan={8} className="text-center text-gray-500 py-8">
                     {t("withdrawals.noWithdrawals")}
                   </td>
                 </tr>
-              )}
-              {filteredWithdrawals.map((w, idx) => {
-                const statusBadge = getStatusBadge(w.status);
-                return (
-                   <tr key={`withdrawal-${w.id || idx}`}>
-                    <td className="font-mono text-sm">{w.id}</td>
-                    <td className="font-medium">
-                      <div className="flex flex-col">
-                        <span className="text-[#ffd700]">#{w.user_id}</span>
-                        <span className="text-xs text-slate-400">
-                          {w.user_email || w.email || "Email not provided by API"}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="font-bold text-sm">{w.coin || "USDT"}</td>
-                    <td>
-                      <span className="font-bold text-[#FFD700]">
-                        {parseFloat(w.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                      </span>
-                    </td>
-                    <td>
-                      <span className="text-xs font-mono break-all block max-w-[180px] truncate" title={w.address}>
-                        {w.address}
-                      </span>
-                    </td>
-                    <td>
-                      <span className="text-xs text-slate-400">
-                        {w.created_at?.slice(0, 19).replace('T', ' ')}
-                      </span>
-                    </td>
-                    <td>
-                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold border ${statusBadge.className}`}>
-                        {statusBadge.icon}
-                        {statusBadge.text}
-                      </span>
-                    </td>
-                    <td>
-                      {w.status === "pending" ? (
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleAction(w.id, "approve")}
-                            className={`px-3 py-1.5 rounded-lg font-bold bg-gradient-to-r from-[#16d79c] to-[#ffd700] text-[#232836] shadow hover:shadow-lg transition-all flex items-center gap-1 text-sm ${
-                              actionLoading ? "opacity-60 cursor-wait" : "hover:scale-105"
-                            }`}
-                            disabled={!!actionLoading}
-                          >
-                            {actionLoading === w.id + "approve" ? (
-                              <Loader2 className="animate-spin" size={14} />
-                            ) : (
-                              <>
-                                <CheckCircle2 size={14} /> {t("withdrawals.approve")}
-                              </>
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleAction(w.id, "deny")}
-                            className={`px-3 py-1.5 rounded-lg font-bold bg-gradient-to-r from-[#f34e6d] to-[#ffd700] text-[#232836] shadow hover:shadow-lg transition-all flex items-center gap-1 text-sm ${
-                              actionLoading ? "opacity-60 cursor-wait" : "hover:scale-105"
-                            }`}
-                            disabled={!!actionLoading}
-                          >
-                            {actionLoading === w.id + "deny" ? (
-                              <Loader2 className="animate-spin" size={14} />
-                            ) : (
-                              <>
-                                <XCircle size={14} /> {t("withdrawals.deny")}
-                              </>
-                            )}
-                          </button>
+              ) : (
+                filteredWithdrawals.map((w, idx) => {
+                  const statusBadge = getStatusBadge(w.status);
+                  return (
+                    <tr key={`withdrawal-${w.id || idx}`}>
+                      <td className="font-mono text-gray-400 text-xs">#{w.id}</td>
+                      <td className="font-medium">
+                        <div className="flex flex-col">
+                          <span className="text-white">#{w.user_id}</span>
+                          <span className="text-[10px] text-gray-500 uppercase tracking-wider mt-0.5">
+                            {w.user_email || w.email || "NO EMAIL"}
+                          </span>
                         </div>
-                      ) : (
-                        <span className="text-green-400 font-bold text-lg">✓</span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })}
+                      </td>
+                      <td className="font-bold text-sm text-gray-300">{w.coin || "USDT"}</td>
+                      <td>
+                        <span className="font-bold text-[#FFD700]">
+                          {parseFloat(w.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="text-xs font-mono text-gray-400 break-all block max-w-[180px] truncate" title={w.address}>
+                          {w.address}
+                        </span>
+                      </td>
+                      <td>
+                        <span className="text-xs text-gray-500">
+                          {w.created_at?.slice(0, 19).replace('T', ' ')}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] uppercase tracking-wider font-bold border ${statusBadge.className}`}>
+                          {statusBadge.icon}
+                          {statusBadge.text}
+                        </span>
+                      </td>
+                      <td>
+                        {w.status === "pending" ? (
+                          <div className="flex gap-1">
+                            <button
+                              onClick={() => handleAction(w.id, "approve")}
+                              disabled={!!actionLoading}
+                              className="px-3 py-1.5 rounded-md text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 transition-colors flex items-center gap-1"
+                            >
+                              {actionLoading === w.id + "approve" ? <Loader2 className="animate-spin" size={14} /> : <CheckCircle2 size={14} />}
+                              {t("withdrawals.approve")}
+                            </button>
+                            <button
+                              onClick={() => handleAction(w.id, "deny")}
+                              disabled={!!actionLoading}
+                              className="px-3 py-1.5 rounded-md text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 transition-colors flex items-center gap-1"
+                            >
+                              {actionLoading === w.id + "deny" ? <Loader2 className="animate-spin" size={14} /> : <XCircle size={14} />}
+                              {t("withdrawals.deny")}
+                            </button>
+                          </div>
+                        ) : (
+                          <span className="text-gray-600 text-sm">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>

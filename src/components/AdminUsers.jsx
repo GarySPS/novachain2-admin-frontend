@@ -352,29 +352,37 @@ return (
                     
                     {/* Flat Mode Toggles */}
                     <td>
-                      <div className="flex gap-1">
-                        <button
-                          onClick={() => setUserWinMode(user.id, userWinModes[user.id] === "WIN" ? null : "WIN")}
-                          disabled={actionLoading === user.id + "-winmode"}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1 ${
-                            userWinModes[user.id] === "WIN"
-                              ? "bg-emerald-500/20 text-emerald-400 border-emerald-500/30"
-                              : "bg-white/5 text-gray-400 border-white/5 hover:bg-white/10"
-                          }`}
-                        >
-                          {t("users.win")}
-                        </button>
-                        <button
-                          onClick={() => setUserWinMode(user.id, userWinModes[user.id] === "LOSE" ? null : "LOSE")}
-                          disabled={actionLoading === user.id + "-winmode"}
-                          className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors flex items-center gap-1 ${
-                            userWinModes[user.id] === "LOSE"
-                              ? "bg-rose-500/20 text-rose-400 border-rose-500/30"
-                              : "bg-white/5 text-gray-400 border-white/5 hover:bg-white/10"
-                          }`}
-                        >
-                          {t("users.lose")}
-                        </button>
+                      <div className="flex flex-col gap-2">
+                        {/* Explicit Status Label */}
+                        {userWinModes[user.id] === "WIN" && <span className="text-emerald-400 text-[10px] uppercase font-extrabold tracking-widest">WIN MODE</span>}
+                        {userWinModes[user.id] === "LOSE" && <span className="text-rose-400 text-[10px] uppercase font-extrabold tracking-widest">LOSE MODE</span>}
+                        {!userWinModes[user.id] && <span className="text-gray-500 text-[10px] uppercase font-extrabold tracking-widest">DEFAULT</span>}
+                        
+                        {/* High-Contrast Toggle Buttons */}
+                        <div className="flex gap-1">
+                          <button
+                            onClick={() => setUserWinMode(user.id, userWinModes[user.id] === "WIN" ? null : "WIN")}
+                            disabled={actionLoading === user.id + "-winmode"}
+                            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center justify-center min-w-[64px] ${
+                              userWinModes[user.id] === "WIN"
+                                ? "bg-emerald-500 text-[#0a0e17] shadow-[0_0_12px_rgba(16,185,129,0.5)] border-none"
+                                : "bg-white/5 text-gray-400 border border-white/5 hover:bg-white/10"
+                            }`}
+                          >
+                            {t("users.win")}
+                          </button>
+                          <button
+                            onClick={() => setUserWinMode(user.id, userWinModes[user.id] === "LOSE" ? null : "LOSE")}
+                            disabled={actionLoading === user.id + "-winmode"}
+                            className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center justify-center min-w-[64px] ${
+                              userWinModes[user.id] === "LOSE"
+                                ? "bg-rose-500 text-[#0a0e17] shadow-[0_0_12px_rgba(244,63,94,0.5)] border-none"
+                                : "bg-white/5 text-gray-400 border border-white/5 hover:bg-white/10"
+                            }`}
+                          >
+                            {t("users.lose")}
+                          </button>
+                        </div>
                       </div>
                     </td>
 
