@@ -1,14 +1,26 @@
 // src/pages/AdminLogin.jsx
 
-import React, { useState, useRef, useEffect } from "react";
-import { KeyRound, Mail, Lock } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  AlertCircle,
+  Eye,
+  EyeOff,
+  KeyRound,
+  Loader2,
+  Lock,
+  Mail,
+  ShieldCheck,
+} from "lucide-react";
 import { API_BASE } from "../config";
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
   const emailRef = useRef(null);
 
   useEffect(() => {
@@ -17,100 +29,152 @@ export default function AdminLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    if (!email || !password) return setError('Please fill in both email and password.');
+    setError("");
+
+    if (!email || !password) {
+      setError("Please fill in both email and password.");
+      return;
+    }
+
     setLoading(true);
+
     try {
       const response = await fetch(`${API_BASE}/api/admin/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+
       const data = await response.json();
-      if (!response.ok) setError(data.message || 'Login failed.');
-      else {
-        localStorage.setItem('adminToken', data.token);
-        localStorage.setItem('adminRole', data.role); // Save the role (superadmin/support)
-        window.location.href = '/dashboard';
+
+      if (!response.ok) {
+        setError(data.message || "Login failed.");
+      } else {
+        localStorage.setItem("adminToken", data.token);
+        localStorage.setItem("adminRole", data.role);
+
+        if (remember) {
+          localStorage.setItem("adminRemember", "true");
+        } else {
+          localStorage.removeItem("adminRemember");
+        }
+
+        window.location.href = "/users";
       }
     } catch {
-      setError('Network error. Please try again.');
+      setError("Network error. Please try again.");
     }
+
     setLoading(false);
   };
 
   return (
-    <div className="relative min-h-screen w-full flex items-center justify-center p-4">
-      {/* Sleek Floating Card */}
-      <div className="bg-[#131722]/80 backdrop-blur-md border border-white/5 rounded-2xl shadow-2xl px-8 py-10 max-w-[400px] w-full animate-fade-in z-10">
-        
-        {/* Header */}
-        <div className="flex flex-col items-center mb-8">
-          <div className="p-3 bg-white/5 border border-white/10 rounded-xl mb-4">
-            <KeyRound size={28} className="text-[#ffd700]" />
+    <main className="admin-login-page">
+      <div className="admin-login-bg">
+        <div className="admin-login-orb admin-login-orb-one" />
+        <div className="admin-login-orb admin-login-orb-two" />
+        <div className="admin-login-grid" />
+      </div>
+
+      <section className="admin-login-card">
+        <div className="admin-login-brand">
+          <div className="admin-login-icon">
+            <KeyRound size={28} />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-1 tracking-tight">Admin Login</h1>
-          <p className="text-sm text-gray-400 font-medium">NovaChain Admin Panel</p>
+
+          <div>
+            <p className="admin-login-kicker">Secure Control Center</p>
+            <h1>Admin Login</h1>
+            <p className="admin-login-subtitle">NovaChain Admin Panel</p>
+          </div>
         </div>
 
-        {/* Error Message */}
+        <div className="admin-login-security">
+          <ShieldCheck size={17} />
+          <span>Protected admin access only</span>
+        </div>
+
         {error && (
-          <div className="w-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm rounded-xl py-3 px-4 mb-6 font-bold text-center">
-            {error}
+          <div className="admin-login-error">
+            <AlertCircle size={18} />
+            <span>{error}</span>
           </div>
         )}
 
-        <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
-          {/* Email Input */}
-          <div className="flex items-center bg-white/5 border border-white/10 rounded-xl px-4 py-1 focus-within:border-[#ffd700] transition-colors">
-            <Mail className="text-gray-400 mr-3" size={18} />
-            <input
-              ref={emailRef}
-              type="email"
-              className="w-full bg-transparent text-white placeholder-gray-500 py-3 focus:outline-none text-sm font-medium [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
-              placeholder="Email Address"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              disabled={loading}
-              autoComplete="username"
-            />
+        <form className="admin-login-form" onSubmit={handleSubmit}>
+          <label className="admin-login-label">
+            Email address
+            <div className="admin-login-field">
+              <Mail size={18} />
+              <input
+                ref={emailRef}
+                type="email"
+                placeholder="admin@novachain.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+                autoComplete="username"
+              />
+            </div>
+          </label>
+
+          <label className="admin-login-label">
+            Password
+            <div className="admin-login-field">
+              <Lock size={18} />
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={loading}
+                autoComplete="current-password"
+              />
+
+              <button
+                type="button"
+                className="admin-login-eye"
+                onClick={() => setShowPassword((value) => !value)}
+                disabled={loading}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+          </label>
+
+          <div className="admin-login-row">
+            <label className="admin-login-check">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                disabled={loading}
+              />
+              <span>Remember this device</span>
+            </label>
+
+            <button type="button" className="admin-login-link">
+              Forgot password?
+            </button>
           </div>
 
-          {/* Password Input */}
-          <div className="flex items-center bg-white/5 border border-white/10 rounded-xl px-4 py-1 focus-within:border-[#ffd700] transition-colors">
-            <Lock className="text-gray-400 mr-3" size={18} />
-            <input
-              type="password"
-              className="w-full bg-transparent text-white placeholder-gray-500 py-3 focus:outline-none text-sm font-medium [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
-              placeholder="Password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              disabled={loading}
-              autoComplete="current-password"
-            />
-          </div>
-
-          {/* Login Button (Flat, No Animation) */}
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full mt-4 py-3.5 rounded-xl font-bold bg-[#ffd700] text-[#0a0e17] text-sm transition-all hover:bg-[#e6c200] disabled:opacity-70 disabled:cursor-not-allowed"
-          >
-            {loading ? "LOGGING IN..." : "LOGIN"}
+          <button type="submit" className="admin-login-submit" disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2 size={18} className="admin-login-spinner" />
+                Signing in...
+              </>
+            ) : (
+              "Sign in to dashboard"
+            )}
           </button>
         </form>
 
-        {/* Footer Links */}
-        <div className="flex flex-row items-center justify-between mt-6 px-1">
-          <label className="flex items-center text-gray-500 text-xs font-medium cursor-not-allowed">
-            <input type="checkbox" className="mr-2 rounded border-gray-600 bg-transparent" disabled />
-            Remember me
-          </label>
-          <span className="text-gray-500 text-xs font-medium hover:text-white cursor-pointer transition-colors">
-            Forgot Password?
-          </span>
-        </div>
-      </div>
-    </div>
+        <p className="admin-login-footer">
+          Only authorized NovaChain operators can access this panel.
+        </p>
+      </section>
+    </main>
   );
 }

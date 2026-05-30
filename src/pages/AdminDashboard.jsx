@@ -1,127 +1,157 @@
 // src/pages/AdminDashboard.jsx
 
-import React, { useState } from "react";
-import LanguageSwitcher from "../components/LanguageSwitcher";
-import AdminUsers from "../components/AdminUsers";
-import AdminDeposits from "../components/AdminDeposits";
-import AdminWithdrawals from "../components/AdminWithdrawals";
-import DepositWalletSettings from "../components/DepositWalletSettings";
-import AdminPhone from "../components/AdminPhone";
-import AdminBalance from "../components/AdminBalance";
+import React, { useEffect, useState } from "react";
+import {
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  BarChart3,
+  KeyRound,
+  Phone,
+  ShieldCheck,
+  Sparkles,
+  Users,
+  WalletCards,
+} from "lucide-react";
 import ChangePasswordModal from "../components/ChangePasswordModal";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, DollarSign, Settings, Banknote, PlusCircle, KeyRound, Phone, LogOut } from "lucide-react";
 
-const tabList = [
-  { key: "users", label: "Users", icon: <Users size={18} /> },
-  { key: "phone", label: "Phone", icon: <Phone size={18} /> },
-  { key: "deposits", label: "Deposits", icon: <DollarSign size={18} /> },
-  { key: "withdrawals", label: "Withdrawals", icon: <Banknote size={18} /> },
-  { key: "balance", label: "Adjust Balance", icon: <PlusCircle size={18} /> },
-  { key: "walletSettings", label: "Deposit Settings", icon: <Settings size={18} /> },
+const dashboardCards = [
+  {
+    title: "User Management",
+    desc: "Review users, KYC images, account mode, and login as user controls.",
+    href: "/users",
+    icon: Users,
+    tone: "blue",
+    cta: "Open Users",
+  },
+  {
+    title: "Deposits",
+    desc: "Check incoming deposit requests and approve verified payments.",
+    href: "/deposits",
+    icon: ArrowDownToLine,
+    tone: "green",
+    cta: "View Deposits",
+  },
+  {
+    title: "Withdrawals",
+    desc: "Review pending withdrawals and process user payout requests.",
+    href: "/withdrawals",
+    icon: ArrowUpFromLine,
+    tone: "rose",
+    cta: "View Withdrawals",
+  },
+  {
+    title: "Adjust Balance",
+    desc: "Safely update user balance with admin-controlled adjustment actions.",
+    href: "/balance",
+    icon: WalletCards,
+    tone: "gold",
+    cta: "Adjust Balance",
+  },
+  {
+    title: "Phone Control",
+    desc: "Manage phone-related admin tools and operator support workflows.",
+    href: "/phone",
+    icon: Phone,
+    tone: "sky",
+    cta: "Open Phone",
+  },
+];
+
+const quickStats = [
+  { label: "Admin Status", value: "Online", hint: "Control panel active" },
+  { label: "Security", value: "Protected", hint: "Token-based session" },
+  { label: "Mode", value: "Live Admin", hint: "Frontend control center" },
 ];
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("users");
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [role, setRole] = useState("admin");
 
-  const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('adminRole');
-    window.location.href = '/';
-  };
+  useEffect(() => {
+    setRole(localStorage.getItem("adminRole") || "admin");
+  }, []);
 
   return (
-    <div className="w-full flex flex-col">
-      {/* Sleek Modern Top Navigation */}
-      <div className="flex flex-col xl:flex-row justify-between items-center gap-4 mb-6 bg-[#131722]/90 backdrop-blur-md rounded-2xl border border-white/5 p-2 shadow-lg">
-        
-        {/* Tabs */}
-        <div className="flex overflow-x-auto no-scrollbar w-full xl:w-auto gap-1 pb-2 xl:pb-0">
-          {tabList
-            .filter(tab => tab.key !== "walletSettings" || localStorage.getItem('adminRole') === 'superadmin')
-            .map(tab => (
-              <button
-                key={tab.key}
-                onClick={() => setActiveTab(tab.key)}
-                className={`
-                  flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap
-                  ${activeTab === tab.key 
-                    ? "bg-white/10 text-[#ffd700] shadow-sm" 
-                    : "text-slate-400 hover:text-white hover:bg-white/5"}
-                `}
-              >
-                <span className={activeTab === tab.key ? "opacity-100" : "opacity-60"}>
-                  {tab.icon}
-                </span>
-                <span>{tab.label}</span>
-              </button>
-          ))}
+    <section className="admin-dashboard-page">
+      <div className="admin-dashboard-hero">
+        <div>
+          <div className="admin-dashboard-kicker">
+            <Sparkles size={16} />
+            NovaChain Admin Center
+          </div>
+
+          <h1>Control Dashboard</h1>
+          <p>
+            Manage users, deposits, withdrawals, balance controls, and admin
+            operations from one clean modern workspace.
+          </p>
         </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-2 px-2 shrink-0 w-full xl:w-auto justify-end">
-          <LanguageSwitcher />
-          
-          <div className="h-6 w-px bg-white/10 mx-2 hidden sm:block"></div>
+        <div className="admin-dashboard-hero-actions">
+          <div className="admin-dashboard-role-card">
+            <ShieldCheck size={18} />
+            <div>
+              <span>Current Role</span>
+              <strong>{role}</strong>
+            </div>
+          </div>
 
           <button
+            type="button"
+            className="admin-dashboard-password-btn"
             onClick={() => setShowPasswordModal(true)}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 text-gray-300 hover:text-white text-sm font-bold transition-colors"
           >
-            <KeyRound size={16} className="text-sky-400" />
-            <span className="hidden sm:inline">Password</span>
-          </button>
-          
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 text-sm font-bold transition-colors"
-          >
-            <LogOut size={16} />
-            <span className="hidden sm:inline">Logout</span>
+            <KeyRound size={17} />
+            Change Password
           </button>
         </div>
       </div>
 
-      {/* Clean Content Container without double-boxing */}
-      <div className="w-full relative min-h-[500px]">
-        <AnimatePresence mode="wait">
-          {activeTab === "users" && (
-            <motion.div key="users" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-              <AdminUsers />
-            </motion.div>
-          )}
+      <div className="admin-dashboard-stats">
+        {quickStats.map((item) => (
+          <div className="admin-dashboard-stat" key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+            <small>{item.hint}</small>
+          </div>
+        ))}
+      </div>
 
-          {activeTab === "deposits" && (
-            <motion.div key="deposits" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-              <AdminDeposits />
-            </motion.div>
-          )}
+      <div className="admin-dashboard-section-title">
+        <BarChart3 size={19} />
+        <div>
+          <h2>Admin Modules</h2>
+          <p>Choose a control area to continue.</p>
+        </div>
+      </div>
 
-          {activeTab === "walletSettings" && (
-            <motion.div key="walletSettings" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-              <DepositWalletSettings />
-            </motion.div>
-          )}
+      <div className="admin-dashboard-grid">
+        {dashboardCards.map((card, index) => {
+          const Icon = card.icon;
 
-          {activeTab === "withdrawals" && (
-            <motion.div key="withdrawals" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-              <AdminWithdrawals />
-            </motion.div>
-          )}
+          return (
+            <motion.a
+              href={card.href}
+              key={card.title}
+              className={`admin-dashboard-card ${card.tone}`}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.22, delay: index * 0.04 }}
+            >
+              <div className="admin-dashboard-card-icon">
+                <Icon size={24} />
+              </div>
 
-          {activeTab === "balance" && (
-            <motion.div key="balance" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-              <AdminBalance />
-            </motion.div>
-          )}
-          
-          {activeTab === "phone" && (
-            <motion.div key="phone" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.2 }}>
-              <AdminPhone />
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <div className="admin-dashboard-card-content">
+                <h3>{card.title}</h3>
+                <p>{card.desc}</p>
+              </div>
+
+              <span className="admin-dashboard-card-cta">{card.cta}</span>
+            </motion.a>
+          );
+        })}
       </div>
 
       <AnimatePresence>
@@ -129,6 +159,6 @@ export default function AdminDashboard() {
           <ChangePasswordModal onClose={() => setShowPasswordModal(false)} />
         )}
       </AnimatePresence>
-    </div>
+    </section>
   );
 }

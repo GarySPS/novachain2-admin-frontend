@@ -1,258 +1,409 @@
-//src>components>AdminPhone.jsx
+// src/components/AdminPhone.jsx
 
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
-import { Phone, CheckCircle, XCircle, Loader2, Users, Smartphone } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  ChevronLeft,
+  ChevronRight,
+  Loader2,
+  Phone,
+  RefreshCcw,
+  Search,
+  Smartphone,
+  UserRound,
+  X,
+  XCircle,
+} from "lucide-react";
+import { API_BASE } from "../config";
 
-// Adjust this base URL if your admin API is hosted elsewhere
-const API_BASE = "http://localhost:5001/api"; 
+const filterOptions = ["all", "pending", "approved"];
 
 export default function AdminPhone() {
   const { t } = useTranslation();
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [actionLoading, setActionLoading] = useState(null);
-  const [filter, setFilter] = useState("all"); // all, pending, approved
+  const [filter, setFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const fetchPhoneUsers = async () => {
     setLoading(true);
+    setError("");
+
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`${API_BASE}/admin/phone-users`, {
+
+      const res = await fetch(`${API_BASE}/api/admin/phone-users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+
       const data = await res.json();
-      if (res.ok) {
-        setUsers(data);
-      } else {
-        setError(t("phone.fetchError"));
+
+      if (!res.ok) {
+        throw new Error(data.message || t("phone.fetchError"));
       }
+
+      setUsers(Array.isArray(data) ? data : []);
     } catch (err) {
-      setError(t("phone.networkError"));
+      setError(err.message || t("phone.networkError"));
     }
+
     setLoading(false);
   };
 
   useEffect(() => {
     fetchPhoneUsers();
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleApprove = async (id) => {
     setActionLoading(id);
     setError("");
     setSuccess("");
+
     try {
       const token = localStorage.getItem("adminToken");
-      const res = await fetch(`${API_BASE}/admin/phone-users/${id}/approve`, {
+
+      const res = await fetch(`${API_BASE}/api/admin/phone-users/${id}/approve`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (res.ok) {
-        setSuccess(t("phone.approveSuccess", { id }));
-        fetchPhoneUsers();
-        setTimeout(() => setSuccess(""), 3000);
-      } else {
-        setError(t("phone.approveError"));
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.message || t("phone.approveError"));
       }
+
+      setSuccess(t("phone.approveSuccess", { id }) || `User #${id} approved.`);
+      await fetchPhoneUsers();
+
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      setError(t("phone.serverError"));
+      setError(err.message || t("phone.serverError"));
     }
+
     setActionLoading(null);
   };
 
-  const filteredUsers = users.filter(user => {
-    if (filter === "all") return true;
-    if (filter === "pending") return !user.verified;
-    if (filter === "approved") return user.verified;
-    return true;
-  });
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      const matchesFilter =
+        filter === "all" ||
+        (filter === "pending" && !user.verified) ||
+        (filter === "approved" && user.verified);
+
+      const cleanPhone = user.email ? user.email.replace("@phone.demo", "") : "";
+      const keyword = searchTerm.trim().toLowerCase();
+
+      const matchesSearch =
+        !keyword ||
+        String(user.id || "").toLowerCase().includes(keyword) ||
+        String(user.username || "").toLowerCase().includes(keyword) ||
+        String(user.memberCode || "").toLowerCase().includes(keyword) ||
+        String(cleanPhone || "").toLowerCase().includes(keyword);
+
+      return matchesFilter && matchesSearch;
+    });
+  }, [users, filter, searchTerm]);
 
   const stats = {
     total: users.length,
-    pending: users.filter(u => !u.verified).length,
-    approved: users.filter(u => u.verified).length,
+    pending: users.filter((user) => !user.verified).length,
+    approved: users.filter((user) => user.verified).length,
   };
 
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / pageSize));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const startIndex = (safeCurrentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const paginatedUsers = filteredUsers.slice(startIndex, endIndex);
+
+  const showingFrom = filteredUsers.length === 0 ? 0 : startIndex + 1;
+  const showingTo = Math.min(endIndex, filteredUsers.length);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter, searchTerm, pageSize]);
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="space-y-6"
-    >
-      {/* Header with Stats */}
-      <div className="flex flex-wrap justify-between items-center gap-4 border-b border-slate-700/50 pb-5">
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-[#16d79c]/20 to-[#ffd700]/20">
-            <Phone className="w-6 h-6 text-[#ffd700]" />
+    <section className="admin-phone-page">
+      <div className="admin-phone-header">
+        <div>
+          <div className="admin-phone-kicker">
+            <Phone size={17} />
+            Phone Control
           </div>
-          <h2 className="text-2xl font-bold text-slate-100 tracking-tight">
-            {t("phone.title")}
-          </h2>
+
+          <h1>{t("phone.title")}</h1>
+          <p>
+            Review phone-login users, member codes, verification status, and
+            approve pending phone accounts.
+          </p>
         </div>
-        
-        {/* Stats Cards */}
-        <div className="flex gap-3">
-          <div className="px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/30">
-            <div className="flex items-center gap-2">
-              <Users size={14} className="text-blue-400" />
-              <span className="text-xs text-blue-400">{t("phone.total")}</span>
-            </div>
-            <p className="font-bold text-blue-300 text-lg">{stats.total}</p>
-          </div>
-          <div className="px-3 py-1.5 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
-            <div className="flex items-center gap-2">
-              <Loader2 size={14} className="text-yellow-400" />
-              <span className="text-xs text-yellow-400">{t("phone.pending")}</span>
-            </div>
-            <p className="font-bold text-yellow-300 text-lg">{stats.pending}</p>
-          </div>
-          <div className="px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/30">
-            <div className="flex items-center gap-2">
-              <CheckCircle size={14} className="text-green-400" />
-              <span className="text-xs text-green-400">{t("phone.approved")}</span>
-            </div>
-            <p className="font-bold text-green-300 text-lg">{stats.approved}</p>
-          </div>
-        </div>
+
+        <button type="button" className="admin-phone-refresh" onClick={fetchPhoneUsers}>
+          <RefreshCcw size={16} />
+          Refresh
+        </button>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex gap-2 border-b border-slate-700/50 pb-2">
-        {["all", "pending", "approved"].map((filterType) => (
-          <button
-            key={filterType}
-            onClick={() => setFilter(filterType)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
-              filter === filterType
-                ? "bg-gradient-to-r from-[#16d79c] to-[#ffd700] text-[#181b25] shadow-lg"
-                : "text-slate-400 hover:text-white hover:bg-white/5"
-            }`}
-          >
-            {t(`phone.filters.${filterType}`)}
-            {filterType !== "all" && (
-              <span className="ml-2 px-1.5 py-0.5 rounded-full bg-white/20 text-xs">
-                {filterType === "pending" ? stats.pending : stats.approved}
-              </span>
-            )}
-          </button>
-        ))}
+      <div className="admin-phone-stats">
+        <button
+          type="button"
+          className={filter === "all" ? "admin-phone-stat active" : "admin-phone-stat"}
+          onClick={() => setFilter("all")}
+        >
+          <span>{t("phone.total")}</span>
+          <strong>{stats.total}</strong>
+        </button>
+
+        <button
+          type="button"
+          className={
+            filter === "pending"
+              ? "admin-phone-stat pending active"
+              : "admin-phone-stat pending"
+          }
+          onClick={() => setFilter("pending")}
+        >
+          <span>{t("phone.pending")}</span>
+          <strong>{stats.pending}</strong>
+        </button>
+
+        <button
+          type="button"
+          className={
+            filter === "approved"
+              ? "admin-phone-stat approved active"
+              : "admin-phone-stat approved"
+          }
+          onClick={() => setFilter("approved")}
+        >
+          <span>{t("phone.approved")}</span>
+          <strong>{stats.approved}</strong>
+        </button>
+      </div>
+
+      <div className="admin-phone-toolbar">
+        <div className="admin-phone-search">
+          <Search size={18} />
+          <input
+            type="text"
+            placeholder="Search by ID, username, phone, or member code"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+          />
+
+          {searchTerm && (
+            <button type="button" onClick={() => setSearchTerm("")}>
+              <X size={16} />
+            </button>
+          )}
+        </div>
+
+        <div className="admin-phone-filter-pills">
+          {filterOptions.map((filterType) => (
+            <button
+              key={filterType}
+              type="button"
+              onClick={() => setFilter(filterType)}
+              className={filter === filterType ? "active" : ""}
+            >
+              {t(`phone.filters.${filterType}`)}
+            </button>
+          ))}
+        </div>
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-red-500/20 border border-red-500/50 text-red-200 rounded-lg">
+        <div className="admin-phone-message error">
           <XCircle size={18} />
-          {error}
+          <span>{error}</span>
         </div>
       )}
-      
+
       {success && (
-        <div className="flex items-center gap-2 p-3 bg-emerald-500/20 border border-emerald-500/50 text-emerald-200 rounded-lg">
+        <div className="admin-phone-message success">
           <CheckCircle size={18} />
-          {success}
+          <span>{success}</span>
         </div>
       )}
 
       {loading ? (
-        <div className="flex justify-center items-center py-16">
-          <Loader2 className="animate-spin text-[#FFD700] mr-2" size={30} />
-          <span className="text-yellow-200 font-bold">{t("common.loading")}</span>
+        <div className="admin-phone-loading">
+          <Loader2 className="admin-phone-spin" size={26} />
+          <span>{t("common.loading")}</span>
         </div>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-slate-700/50 bg-[#151b2b]/50 shadow-xl backdrop-blur-md">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-slate-800/80 text-xs uppercase text-slate-400">
-              <tr>
-                <th className="px-6 py-4 font-semibold">{t("phone.id")}</th>
-                <th className="px-6 py-4 font-semibold">{t("phone.username")}</th>
-                <th className="px-6 py-4 font-semibold">{t("phone.phoneNumber")}</th>
-                <th className="px-6 py-4 font-semibold">{t("phone.code")}</th>
-                <th className="px-6 py-4 font-semibold">{t("phone.status")}</th>
-                <th className="px-6 py-4 font-semibold text-right">{t("common.actions")}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-700/50">
-              {filteredUsers.length === 0 ? (
-                <tr>
-                  <td colSpan="6" className="py-8 text-center text-slate-500">
-                    {filter === "pending" 
-                      ? t("phone.noPendingUsers")
-                      : filter === "approved"
-                      ? t("phone.noApprovedUsers")
-                      : t("phone.noUsers")}
-                  </td>
-                </tr>
-              ) : (
-                filteredUsers.map((u) => {
-                  const cleanPhone = u.email ? u.email.replace("@phone.demo", "") : "N/A";
-                  
-                  return (
-                    <tr key={u.id} className="hover:bg-slate-800/30 transition-colors group">
-                      <td className="px-6 py-4 font-mono text-xs text-slate-400">#{u.id}</td>
-                      <td className="px-6 py-4 font-medium text-slate-200">
-                        <div className="flex items-center gap-2">
-                          <Smartphone size={14} className="text-slate-500" />
-                          {u.username}
+        <>
+          <div className="admin-phone-table-card">
+            <div className="admin-phone-table-scroll">
+              <table className="admin-phone-table">
+                <thead>
+                  <tr>
+                    <th>{t("phone.id")}</th>
+                    <th>{t("phone.username")}</th>
+                    <th>{t("phone.phoneNumber")}</th>
+                    <th>{t("phone.code")}</th>
+                    <th>{t("phone.status")}</th>
+                    <th>{t("common.actions")}</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {filteredUsers.length === 0 ? (
+                    <tr>
+                      <td colSpan={6}>
+                        <div className="admin-phone-empty">
+                          <Smartphone size={30} />
+                          <strong>
+                            {filter === "pending"
+                              ? t("phone.noPendingUsers")
+                              : filter === "approved"
+                              ? t("phone.noApprovedUsers")
+                              : t("phone.noUsers")}
+                          </strong>
+                          <span>No matching phone user found.</span>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 font-mono text-sky-400">
-                        <div className="flex items-center gap-1">
-                          <Phone size={12} />
-                          {cleanPhone}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <code className="px-2 py-1 rounded bg-slate-700/50 text-yellow-400 font-mono text-xs">
-                          {u.memberCode || "N/A"}
-                        </code>
-                      </td>
-                      <td className="px-6 py-4">
-                        {u.verified ? (
-                          <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-medium text-emerald-400 border border-emerald-500/20">
-                            <CheckCircle size={12} />
-                            {t("phone.approved")}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-400 border border-amber-500/20">
-                            <Loader2 size={12} className="animate-spin" />
-                            {t("phone.pending")}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        {!u.verified && (
-                          <button
-                            onClick={() => handleApprove(u.id)}
-                            disabled={!!actionLoading}
-                            className={`rounded-lg bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 px-4 py-2 text-xs font-bold text-white transition-all shadow-lg ${
-                              actionLoading ? "opacity-50 cursor-not-allowed" : "hover:scale-105"
-                            }`}
-                          >
-                            {actionLoading === u.id ? (
-                              <Loader2 className="animate-spin inline mr-1" size={14} />
-                            ) : (
-                              <CheckCircle size={14} className="inline mr-1" />
-                            )}
-                            {t("phone.approve")}
-                          </button>
-                        )}
-                        {u.verified && (
-                          <span className="text-xs text-green-400 opacity-60">
-                            {t("phone.alreadyApproved")}
-                          </span>
-                        )}
                       </td>
                     </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
+                  ) : (
+                    paginatedUsers.map((user) => {
+                      const cleanPhone = user.email
+                        ? user.email.replace("@phone.demo", "")
+                        : "N/A";
+
+                      return (
+                        <tr key={user.id}>
+                          <td>
+                            <span className="admin-phone-id">#{user.id}</span>
+                          </td>
+
+                          <td>
+                            <div className="admin-phone-user">
+                              <UserRound size={15} />
+                              <strong>{user.username || "N/A"}</strong>
+                            </div>
+                          </td>
+
+                          <td>
+                            <span className="admin-phone-number">
+                              <Phone size={13} />
+                              {cleanPhone}
+                            </span>
+                          </td>
+
+                          <td>
+                            <span className="admin-phone-code">
+                              {user.memberCode || "N/A"}
+                            </span>
+                          </td>
+
+                          <td>
+                            {user.verified ? (
+                              <span className="admin-phone-status approved">
+                                <CheckCircle size={14} />
+                                {t("phone.approved")}
+                              </span>
+                            ) : (
+                              <span className="admin-phone-status pending">
+                                <AlertCircle size={14} />
+                                {t("phone.pending")}
+                              </span>
+                            )}
+                          </td>
+
+                          <td>
+                            {!user.verified ? (
+                              <button
+                                type="button"
+                                className="admin-phone-approve"
+                                onClick={() => handleApprove(user.id)}
+                                disabled={!!actionLoading}
+                              >
+                                {actionLoading === user.id ? (
+                                  <Loader2
+                                    className="admin-phone-spin"
+                                    size={15}
+                                  />
+                                ) : (
+                                  <CheckCircle size={15} />
+                                )}
+                                {t("phone.approve")}
+                              </button>
+                            ) : (
+                              <span className="admin-phone-approved-text">
+                                {t("phone.alreadyApproved")}
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {filteredUsers.length > 0 && (
+            <div className="admin-phone-pagination">
+              <div className="admin-phone-pagination-info">
+                Showing <strong>{showingFrom}</strong> -{" "}
+                <strong>{showingTo}</strong> of{" "}
+                <strong>{filteredUsers.length}</strong> phone users
+              </div>
+
+              <div className="admin-phone-pagination-controls">
+                <label>
+                  Rows
+                  <select
+                    value={pageSize}
+                    onChange={(event) => setPageSize(Number(event.target.value))}
+                  >
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                  </select>
+                </label>
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  disabled={safeCurrentPage <= 1}
+                >
+                  <ChevronLeft size={16} />
+                  Prev
+                </button>
+
+                <span>
+                  Page <strong>{safeCurrentPage}</strong> / {totalPages}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentPage((page) => Math.min(totalPages, page + 1))
+                  }
+                  disabled={safeCurrentPage >= totalPages}
+                >
+                  Next
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
-    </motion.div>
+    </section>
   );
 }

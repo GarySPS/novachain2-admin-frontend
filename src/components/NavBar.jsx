@@ -1,66 +1,126 @@
 // src/components/NavBar.jsx
 
-import React from "react";
-import { LogOut } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import {
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  LogOut,
+  Menu,
+  Phone,
+  Settings,
+  ShieldCheck,
+  UserCog,
+  Users,
+  WalletCards,
+  X,
+} from "lucide-react";
 
 const navLinks = [
-  { path: "/dashboard", label: "Dashboard" },
-  { path: "/users", label: "Users" },
-  { path: "/kyc", label: "KYC" },
-  { path: "/deposits", label: "Deposits" },
-  { path: "/withdrawals", label: "Withdrawals" },
-  { path: "/settings", label: "Wallet Settings" },
-  { path: "/balance", label: "Adjust Balance" },
+  { path: "/users", label: "Users", icon: Users },
+  { path: "/phone", label: "Phone", icon: Phone },
+  { path: "/deposits", label: "Deposits", icon: ArrowDownToLine },
+  { path: "/withdrawals", label: "Withdrawals", icon: ArrowUpFromLine },
+  { path: "/balance", label: "Adjust Balance", icon: WalletCards },
+  { path: "/settings", label: "Wallet Settings", icon: Settings },
 ];
 
 export default function NavBar() {
-  // Use native window.location instead of react-router-dom's useLocation 
-  // to avoid crashing when rendered outside of a <Router> context
-  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/dashboard';
+  const [currentPath, setCurrentPath] = useState("/dashboard");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [role, setRole] = useState("admin");
+
+  useEffect(() => {
+    setCurrentPath(window.location.pathname || "/dashboard");
+    setRole(localStorage.getItem("adminRole") || "admin");
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminRole");
+    localStorage.removeItem("adminRemember");
+    window.location.href = "/";
+  };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-[#131722]/90 backdrop-blur-md border-b border-white/5 px-5 md:px-8 py-3 flex items-center justify-between shadow-sm">
-      <div className="flex items-center gap-4">
-        {/* Minimalist Logo */}
-        <span className="font-extrabold text-2xl tracking-tight text-white">
-          Nova<span className="text-[#ffd700]">Chain</span>
-        </span>
-        
-        {/* Subtle Admin Badge */}
-        <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-white/10 text-gray-300 border border-white/5 tracking-wider uppercase">
-          Admin
-        </span>
-        
-        {/* Navigation Links */}
-        <nav className="ml-6 hidden md:flex gap-1">
-          {navLinks.map(link => (
-            <a
-              key={link.path}
-              href={link.path}
-              className={`px-3 py-2 rounded-xl font-bold text-sm transition-colors ${
-                currentPath === link.path
-                  ? "bg-white/10 text-[#ffd700]"
-                  : "text-slate-400 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              {link.label}
-            </a>
-          ))}
+    <header className="admin-navbar">
+      <div className="admin-navbar-inner">
+        <a href="/users" className="admin-navbar-brand" aria-label="NovaChain Admin Users">
+          <div className="admin-navbar-logo">
+            <ShieldCheck size={22} />
+          </div>
+
+          <div className="admin-navbar-brand-text">
+            <strong>
+              Nova<span>Chain</span>
+            </strong>
+            <small>Admin Control</small>
+          </div>
+        </a>
+
+        <nav className="admin-navbar-links" aria-label="Admin navigation">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const active = currentPath === link.path;
+
+            return (
+              <a
+                key={link.path}
+                href={link.path}
+                className={active ? "admin-navbar-link active" : "admin-navbar-link"}
+              >
+                <Icon size={16} />
+                <span>{link.label}</span>
+              </a>
+            );
+          })}
         </nav>
+
+        <div className="admin-navbar-actions">
+          <div className="admin-navbar-role">
+            <UserCog size={15} />
+            <span>{role}</span>
+          </div>
+
+          <button type="button" className="admin-navbar-logout" onClick={handleLogout}>
+            <LogOut size={16} />
+            <span>Logout</span>
+          </button>
+
+          <button
+            type="button"
+            className="admin-navbar-menu-btn"
+            onClick={() => setMenuOpen((value) => !value)}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
-      {/* Red Logout Button (Matches Dashboard) */}
-      <button
-        onClick={() => {
-          localStorage.removeItem('adminToken');
-          window.location.href = '/';
-        }}
-        className="flex items-center gap-2 px-3 py-2 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-400 text-sm font-bold transition-colors"
-        title="Logout"
-      >
-        <LogOut size={16} />
-        <span className="hidden sm:inline">Logout</span>
-      </button>
+      {menuOpen && (
+        <div className="admin-navbar-mobile">
+          {navLinks.map((link) => {
+            const Icon = link.icon;
+            const active = currentPath === link.path;
+
+            return (
+              <a
+                key={link.path}
+                href={link.path}
+                className={active ? "admin-navbar-mobile-link active" : "admin-navbar-mobile-link"}
+              >
+                <Icon size={17} />
+                <span>{link.label}</span>
+              </a>
+            );
+          })}
+
+          <button type="button" className="admin-navbar-mobile-logout" onClick={handleLogout}>
+            <LogOut size={17} />
+            <span>Logout</span>
+          </button>
+        </div>
+      )}
     </header>
   );
 }
