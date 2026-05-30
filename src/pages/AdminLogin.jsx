@@ -67,7 +67,7 @@ export default function AdminLogin() {
             <input
               ref={emailRef}
               type="email"
-              className="w-full bg-transparent text-white placeholder-gray-500 py-3 focus:outline-none text-sm font-medium"
+              className="w-full bg-transparent text-white placeholder-gray-500 py-3 focus:outline-none text-sm font-medium [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
               placeholder="Email Address"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -81,7 +81,7 @@ export default function AdminLogin() {
             <Lock className="text-gray-400 mr-3" size={18} />
             <input
               type="password"
-              className="w-full bg-transparent text-white placeholder-gray-500 py-3 focus:outline-none text-sm font-medium"
+              className="w-full bg-transparent text-white placeholder-gray-500 py-3 focus:outline-none text-sm font-medium [&:-webkit-autofill]:[-webkit-text-fill-color:white] [&:-webkit-autofill]:[transition:background-color_9999s_ease-in-out_0s]"
               placeholder="Password"
               value={password}
               onChange={e => setPassword(e.target.value)}
