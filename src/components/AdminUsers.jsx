@@ -16,9 +16,10 @@ ChevronRight,
 RefreshCcw,
 Search,
 Trash2,
-  UserCircle2,
+UserCircle2,
   X,
   XCircle,
+  Key,
 } from "lucide-react";
 import { API_BASE } from "../config";
 
@@ -64,6 +65,11 @@ const [pageSize, setPageSize] = useState(10);
   const [userWinModes, setUserWinModes] = useState({});
   const [userIdSearch, setUserIdSearch] = useState("");
   const [previewImage, setPreviewImage] = useState(null);
+  const [resetModal, setResetModal] = useState({ 
+    isOpen: false, 
+    user: null, 
+    newPassword: "" 
+  });
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -180,6 +186,33 @@ const [pageSize, setPageSize] = useState(10);
       await fetchUsers();
     } catch (err) {
       setError(err.message || t("users.deleteError"));
+    }
+
+    setActionLoading(null);
+  };
+
+  const generateNewPassword = async (user_id) => {
+    setActionLoading(user_id + "-reset");
+    setError("");
+
+    try {
+      const token = localStorage.getItem("adminToken");
+      const res = await fetch(`${API_BASE}/api/admin/user/${user_id}/reset-password`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Failed to reset password");
+
+      setResetModal({
+        isOpen: true,
+        user: users.find((u) => u.id === user_id),
+        newPassword: data.newPassword,
+      });
+    } catch (err) {
+      setError(err.message || "Failed to generate password");
     }
 
     setActionLoading(null);
@@ -530,7 +563,21 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
                           </div>
                         </td>
 
-                        <td>
+<td style={{ display: "flex", gap: "8px", border: "none" }}>
+                          <button
+                            type="button"
+                            onClick={() => generateNewPassword(user.id)}
+                            disabled={actionLoading === user.id + "-reset"}
+                            className="admin-users-action-btn reset"
+                          >
+                            {actionLoading === user.id + "-reset" ? (
+                              <Loader2 className="admin-users-spin" size={15} />
+                            ) : (
+                              <Key size={15} />
+                            )}
+                            <span>Reset Pass</span>
+                          </button>
+
                           <button
                             type="button"
                             onClick={() => deleteUser(user.id)}
@@ -612,6 +659,41 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
             </div>
 
             <img src={previewImage.url} alt={previewImage.title} />
+          </div>
+        </div>
+      )}
+
+      {resetModal.isOpen && (
+        <div className="admin-users-preview-backdrop" onClick={() => setResetModal({ isOpen: false, user: null, newPassword: "" })}>
+          <div 
+            className="admin-users-preview" 
+            onClick={(e) => e.stopPropagation()} 
+            style={{ padding: "24px", maxWidth: "400px", background: "rgba(20, 20, 20, 0.8)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px" }}
+          >
+            <div className="admin-users-preview-head" style={{ marginBottom: "20px" }}>
+              <strong>New Password for #{resetModal.user?.id}</strong>
+              <button type="button" onClick={() => setResetModal({ isOpen: false, user: null, newPassword: "" })}>
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div style={{ textAlign: "center" }}>
+              <p style={{ marginBottom: "15px", color: "#a1a1aa", fontSize: "0.9rem" }}>
+                Password successfully generated. Please copy and securely share it with the user.
+              </p>
+              <div style={{ 
+                background: "rgba(0,0,0,0.5)", 
+                padding: "15px", 
+                borderRadius: "8px", 
+                fontSize: "1.5rem", 
+                fontFamily: "'Geist Mono', monospace", 
+                color: "#fff",
+                userSelect: "all", 
+                border: "1px solid rgba(255,255,255,0.05)" 
+              }}>
+                {resetModal.newPassword}
+              </div>
+            </div>
           </div>
         </div>
       )}

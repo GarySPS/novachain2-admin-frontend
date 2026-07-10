@@ -16,8 +16,9 @@ import { createClient } from "@supabase/supabase-js";
 import { API_BASE } from "../config";
 
 const SUPABASE_URL = "https://obrfnkggcfgfspyqgtws.supabase.co";
-const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJvYnJmbmtnZ2NmZ2ZzcHlxZ3R3cyIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzYzMjM5MjUwLCJleHAiOjIwNzg4MTUyNTB9.fMvyyXxfQn3kSA1phf1-qRnMN-BvtbMIaTwGD0I";
+
+// Read the key from the environment instead of hardcoding
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_KEY || process.env.REACT_APP_SUPABASE_KEY;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
