@@ -363,6 +363,7 @@ export default function DepositWalletSettings() {
                         handleAddressChange(index, event.target.value)
                       }
                       placeholder={`Enter ${wallet.symbol} deposit address`}
+                      readOnly={!SHOW_SAVE_BUTTON} 
                     />
 
                     <button
@@ -424,32 +425,34 @@ export default function DepositWalletSettings() {
                       )}
                     </button>
 
-                    <label
-                      className={
-                        wallet.isUploading
-                          ? "admin-wallet-upload disabled"
-                          : "admin-wallet-upload"
-                      }
-                    >
-                      {wallet.isUploading ? (
-                        <Loader2
-                          size={15}
-                          className="admin-wallet-settings-spin"
-                        />
-                      ) : (
-                        <UploadCloud size={15} />
-                      )}
-                      {wallet.isUploading ? "Uploading..." : "Upload QR"}
-
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(event) =>
-                          handleQRUpload(index, event.target.files?.[0])
+                    {SHOW_SAVE_BUTTON && (
+                      <label
+                        className={
+                          wallet.isUploading
+                            ? "admin-wallet-upload disabled"
+                            : "admin-wallet-upload"
                         }
-                        disabled={wallet.isUploading}
-                      />
-                    </label>
+                      >
+                        {wallet.isUploading ? (
+                          <Loader2
+                            size={15}
+                            className="admin-wallet-settings-spin"
+                          />
+                        ) : (
+                          <UploadCloud size={15} />
+                        )}
+                        {wallet.isUploading ? "Uploading..." : "Upload QR"}
+
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(event) =>
+                            handleQRUpload(index, event.target.files?.[0])
+                          }
+                          disabled={wallet.isUploading}
+                        />
+                      </label>
+                    )}
                   </div>
                 </div>
               </div>
