@@ -46,6 +46,11 @@ const getExplorerLink = (symbol, address) => {
 };
 
 export default function DepositWalletSettings() {
+
+  //onoff save button
+  const SHOW_SAVE_BUTTON = false;
+
+
   const [wallets, setWallets] = useState(
     supportedCoins.map((coin) => ({
       ...coin,
@@ -276,19 +281,21 @@ export default function DepositWalletSettings() {
           </p>
         </div>
 
-        <button
-          type="button"
-          className="admin-wallet-settings-save-top"
-          onClick={handleSave}
-          disabled={saving || wallets.some((wallet) => wallet.isUploading)}
-        >
-          {saving ? (
-            <Loader2 size={17} className="admin-wallet-settings-spin" />
-          ) : (
-            <Save size={17} />
-          )}
-          {saving ? "Saving..." : "Save Settings"}
-        </button>
+        {SHOW_SAVE_BUTTON && (
+          <button
+            type="button"
+            className="admin-wallet-settings-save-top"
+            onClick={handleSave}
+            disabled={saving || wallets.some((wallet) => wallet.isUploading)}
+          >
+            {saving ? (
+              <Loader2 size={17} className="admin-wallet-settings-spin" />
+            ) : (
+              <Save size={17} />
+            )}
+            {saving ? "Saving..." : "Save Settings"}
+          </button>
+        )}
       </div>
 
       <div className="admin-wallet-settings-stats">
@@ -356,6 +363,7 @@ export default function DepositWalletSettings() {
                         handleAddressChange(index, event.target.value)
                       }
                       placeholder={`Enter ${wallet.symbol} deposit address`}
+                      readOnly={!SHOW_SAVE_BUTTON} 
                     />
 
                     <button
@@ -417,32 +425,34 @@ export default function DepositWalletSettings() {
                       )}
                     </button>
 
-                    <label
-                      className={
-                        wallet.isUploading
-                          ? "admin-wallet-upload disabled"
-                          : "admin-wallet-upload"
-                      }
-                    >
-                      {wallet.isUploading ? (
-                        <Loader2
-                          size={15}
-                          className="admin-wallet-settings-spin"
-                        />
-                      ) : (
-                        <UploadCloud size={15} />
-                      )}
-                      {wallet.isUploading ? "Uploading..." : "Upload QR"}
-
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(event) =>
-                          handleQRUpload(index, event.target.files?.[0])
+                    {SHOW_SAVE_BUTTON && (
+                      <label
+                        className={
+                          wallet.isUploading
+                            ? "admin-wallet-upload disabled"
+                            : "admin-wallet-upload"
                         }
-                        disabled={wallet.isUploading}
-                      />
-                    </label>
+                      >
+                        {wallet.isUploading ? (
+                          <Loader2
+                            size={15}
+                            className="admin-wallet-settings-spin"
+                          />
+                        ) : (
+                          <UploadCloud size={15} />
+                        )}
+                        {wallet.isUploading ? "Uploading..." : "Upload QR"}
+
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(event) =>
+                            handleQRUpload(index, event.target.files?.[0])
+                          }
+                          disabled={wallet.isUploading}
+                        />
+                      </label>
+                    )}
                   </div>
                 </div>
               </div>
@@ -451,7 +461,7 @@ export default function DepositWalletSettings() {
         </div>
       )}
 
-      {!loading && (
+      {!loading && SHOW_SAVE_BUTTON && (
         <div className="admin-wallet-settings-footer">
           <div>
             <strong>Review before saving</strong>
