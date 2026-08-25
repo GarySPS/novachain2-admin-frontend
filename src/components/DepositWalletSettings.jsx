@@ -46,6 +46,11 @@ const getExplorerLink = (symbol, address) => {
 };
 
 export default function DepositWalletSettings() {
+
+  //onoff save button
+  const SHOW_SAVE_BUTTON = false;
+
+
   const [wallets, setWallets] = useState(
     supportedCoins.map((coin) => ({
       ...coin,
@@ -276,19 +281,21 @@ export default function DepositWalletSettings() {
           </p>
         </div>
 
-        <button
-          type="button"
-          className="admin-wallet-settings-save-top"
-          onClick={handleSave}
-          disabled={saving || wallets.some((wallet) => wallet.isUploading)}
-        >
-          {saving ? (
-            <Loader2 size={17} className="admin-wallet-settings-spin" />
-          ) : (
-            <Save size={17} />
-          )}
-          {saving ? "Saving..." : "Save Settings"}
-        </button>
+        {SHOW_SAVE_BUTTON && (
+          <button
+            type="button"
+            className="admin-wallet-settings-save-top"
+            onClick={handleSave}
+            disabled={saving || wallets.some((wallet) => wallet.isUploading)}
+          >
+            {saving ? (
+              <Loader2 size={17} className="admin-wallet-settings-spin" />
+            ) : (
+              <Save size={17} />
+            )}
+            {saving ? "Saving..." : "Save Settings"}
+          </button>
+        )}
       </div>
 
       <div className="admin-wallet-settings-stats">
@@ -451,7 +458,7 @@ export default function DepositWalletSettings() {
         </div>
       )}
 
-      {!loading && (
+      {!loading && SHOW_SAVE_BUTTON && (
         <div className="admin-wallet-settings-footer">
           <div>
             <strong>Review before saving</strong>
