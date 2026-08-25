@@ -11,6 +11,7 @@ import {
   UploadCloud,
   Wallet2,
   X,
+  ExternalLink
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { API_BASE } from "../config";
@@ -31,6 +32,18 @@ const supportedCoins = [
 ];
 
 const API_URL = `${API_BASE}/api/admin/deposit-addresses`;
+
+const getExplorerLink = (symbol, address) => {
+  if (!address) return "#";
+  switch (symbol) {
+    case "BTC": return `https://www.blockchain.com/explorer/addresses/btc/${address}`;
+    case "ETH": return `https://etherscan.io/address/${address}`;
+    case "BNB": return `https://bscscan.com/address/${address}`;
+    case "USDC": return `https://etherscan.io/address/${address}`;
+    case "USDT": return `https://tronscan.org/#/address/${address}`; // Routes TRC-20 correctly
+    default: return `https://etherscan.io/address/${address}`;
+  }
+};
 
 export default function DepositWalletSettings() {
   const [wallets, setWallets] = useState(
@@ -353,6 +366,17 @@ export default function DepositWalletSettings() {
                     >
                       <Copy size={15} />
                     </button>
+
+                    {/* --- ADD THIS NEW BUTTON --- */}
+                    <button
+                      type="button"
+                      onClick={() => window.open(getExplorerLink(wallet.symbol, wallet.address), '_blank')}
+                      disabled={!wallet.address}
+                      title="View history on explorer"
+                    >
+                      <ExternalLink size={15} />
+                    </button>
+                    {/* --------------------------- */}
                   </div>
                 </div>
 
