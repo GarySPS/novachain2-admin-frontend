@@ -406,9 +406,18 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
                         </td>
 
                         <td>
-                          <div className="admin-users-email">
-                            <strong>{user.email}</strong>
-                            <span>User account</span>
+                          <div className="admin-users-email" style={{ maxWidth: '220px' }}>
+                            <strong 
+                              style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                            >
+                              {user.username ? user.username : `User #${user.id}`}
+                            </strong>
+                            <span 
+                              title={user.email} 
+                              style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px', opacity: 0.7 }}
+                            >
+                              {user.email}
+                            </span>
                           </div>
                         </td>
 
