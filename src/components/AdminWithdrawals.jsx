@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  Copy,
   Loader2,
   RefreshCcw,
   Search,
@@ -28,6 +29,14 @@ export default function AdminWithdrawals() {
   const [actionLoading, setActionLoading] = useState(null);
   const [filter, setFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [copiedId, setCopiedId] = useState(null);
+
+  const handleCopy = (id, text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000); // Checkmark turns back to copy icon after 2s
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -335,9 +344,10 @@ export default function AdminWithdrawals() {
                             <span className="admin-withdrawals-id">#{w.id}</span>
                           </td>
 
+                          {/* 1. UPDATED USER COLUMN */}
                           <td>
                             <div className="admin-withdrawals-user">
-                              <strong>#{w.user_id}</strong>
+                              <strong>{w.username ? w.username : `User #${w.user_id}`}</strong>
                               <span>{w.user_email || w.email || "NO EMAIL"}</span>
                             </div>
                           </td>
@@ -356,13 +366,27 @@ export default function AdminWithdrawals() {
                             </span>
                           </td>
 
+                          {/* 2. UPDATED ADDRESS COLUMN (WITH COPY BUTTON) */}
                           <td>
-                            <span
-                              className="admin-withdrawals-address"
-                              title={w.address}
-                            >
-                              {w.address || "N/A"}
-                            </span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <span
+                                className="admin-withdrawals-address"
+                                title={w.address}
+                                style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                              >
+                                {w.address || "N/A"}
+                              </span>
+                              {w.address && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleCopy(w.id, w.address)}
+                                  title="Copy address"
+                                  style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: '2px' }}
+                                >
+                                  {copiedId === w.id ? <CheckCircle2 size={16} color="#10b981" /> : <Copy size={16} />}
+                                </button>
+                              )}
+                            </div>
                           </td>
 
                           <td>
