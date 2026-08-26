@@ -350,7 +350,7 @@ export default function AdminDeposits() {
 
                           <td>
                             <div className="admin-deposits-user">
-                              <strong>#{d.user_id}</strong>
+                              <strong>{d.username ? d.username : `User #${d.user_id}`}</strong>
                               <span>{d.user_email || d.email || "NO EMAIL"}</span>
                             </div>
                           </td>
