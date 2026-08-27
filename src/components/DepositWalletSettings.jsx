@@ -18,8 +18,8 @@ import { API_BASE } from "../config";
 
 const SUPABASE_URL = "https://obrfnkggcfgfspyqgtws.supabase.co";
 
-// Read the key from the environment instead of hardcoding
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_KEY || process.env.REACT_APP_SUPABASE_KEY;
+// Read the key safely for both Vite and legacy React setups without crashing
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_KEY || (typeof process !== "undefined" ? process.env.REACT_APP_SUPABASE_KEY : "");
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
