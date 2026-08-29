@@ -48,7 +48,7 @@ const getExplorerLink = (symbol, address) => {
 export default function DepositWalletSettings() {
 
   //onoff save button
-  const SHOW_SAVE_BUTTON = false;
+  const SHOW_SAVE_BUTTON = true;
 
 
   const [wallets, setWallets] = useState(
