@@ -624,7 +624,6 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
     <span>Assign Agent</span>
   </button>
 
-  {/* Existing Reset Pass Button starts here */}
   <button
     type="button"
     onClick={() => generateNewPassword(user.id)}
