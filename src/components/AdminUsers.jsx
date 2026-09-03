@@ -71,6 +71,12 @@ const [pageSize, setPageSize] = useState(10);
     newPassword: "" 
   });
 
+  const [assignModal, setAssignModal] = useState({
+    isOpen: false,
+    userId: null,
+    agentCode: ""
+  });
+
   const fetchUsers = async () => {
     setLoading(true);
     setError("");
@@ -191,33 +197,29 @@ const [pageSize, setPageSize] = useState(10);
     setActionLoading(null);
   };
 
-  const assignAgent = async (user_id) => {
-    const agentCode = window.prompt("Enter the Agent Username/Code to assign to this user:");
-    if (!agentCode) return; // Cancel if input is empty
+  const submitAssignAgent = async () => {
+    if (!assignModal.agentCode) return;
 
-    setActionLoading(user_id + "-agent");
+    setActionLoading(assignModal.userId + "-agent");
     setError("");
 
     try {
       const token = localStorage.getItem("adminToken");
-
-      const res = await fetch(`${API_BASE}/api/admin/user/${user_id}/assign-agent`, {
+      const res = await fetch(`${API_BASE}/api/admin/user/${assignModal.userId}/assign-agent`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}` 
         },
-        body: JSON.stringify({ agentCode }),
+        body: JSON.stringify({ agentCode: assignModal.agentCode }),
       });
 
       const data = await res.json();
       
-      if (!res.ok) {
-        throw new Error(data.message || "Failed to assign agent");
-      }
+      if (!res.ok) throw new Error(data.message || "Failed to assign agent");
       
-      alert(data.message); // Show success pop-up
-      await fetchUsers(); // Refresh the table
+      setAssignModal({ isOpen: false, userId: null, agentCode: "" });
+      await fetchUsers(); 
     } catch (err) {
       setError(err.message || "Failed to assign agent");
     }
@@ -608,20 +610,24 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
 
 <td style={{ display: "flex", gap: "8px", border: "none" }}>
   
-  {/* NEW AGENT BUTTON */}
+  {/* SMART AGENT BUTTON */}
   <button
     type="button"
-    onClick={() => assignAgent(user.id)}
+    onClick={() => setAssignModal({ isOpen: true, userId: user.id, agentCode: user.member_code || "" })}
     disabled={actionLoading === user.id + "-agent"}
     className="admin-users-action-btn"
-    style={{ backgroundColor: "rgba(59, 130, 246, 0.15)", color: "#60a5fa" }}
+    style={{ 
+      backgroundColor: user.member_code ? "rgba(16, 185, 129, 0.15)" : "rgba(59, 130, 246, 0.15)", 
+      color: user.member_code ? "#34d399" : "#60a5fa",
+      border: user.member_code ? "1px solid rgba(16, 185, 129, 0.3)" : "none"
+    }}
   >
     {actionLoading === user.id + "-agent" ? (
       <Loader2 className="admin-users-spin" size={15} />
     ) : (
       <UserCircle2 size={15} />
     )}
-    <span>Assign Agent</span>
+    <span>{user.member_code ? `Agent: ${user.member_code}` : "Assign Agent"}</span>
   </button>
 
   <button
@@ -757,6 +763,55 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
           </div>
         </div>
       )}
+
+      {/* NEW ASSIGN AGENT MODAL */}
+      {assignModal.isOpen && (
+        <div className="admin-users-preview-backdrop" onClick={() => setAssignModal({ isOpen: false, userId: null, agentCode: "" })}>
+          <div 
+            className="admin-users-preview" 
+            onClick={(e) => e.stopPropagation()} 
+            style={{ padding: "24px", maxWidth: "400px", width: "90%", background: "rgba(20, 20, 20, 0.8)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px" }}
+          >
+            <div className="admin-users-preview-head" style={{ marginBottom: "20px" }}>
+              <strong>Assign Agent to #{assignModal.userId}</strong>
+              <button type="button" onClick={() => setAssignModal({ isOpen: false, userId: null, agentCode: "" })}>
+                <X size={18} />
+              </button>
+            </div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+              <p style={{ margin: 0, color: "#a1a1aa", fontSize: "0.9rem" }}>
+                Enter the Agent's username to link this user to their network.
+              </p>
+              <input 
+                type="text"
+                placeholder="e.g. agent1"
+                value={assignModal.agentCode}
+                onChange={(e) => setAssignModal(prev => ({ ...prev, agentCode: e.target.value }))}
+                style={{
+                  background: "rgba(0,0,0,0.5)", padding: "12px 15px", borderRadius: "8px", 
+                  color: "#fff", border: "1px solid rgba(255,255,255,0.1)", outline: "none"
+                }}
+                autoFocus
+              />
+              <button 
+                type="button"
+                onClick={submitAssignAgent}
+                disabled={!assignModal.agentCode || actionLoading === assignModal.userId + "-agent"}
+                style={{
+                  background: "#3b82f6", color: "#fff", padding: "12px", borderRadius: "8px", 
+                  fontWeight: "bold", border: "none", cursor: assignModal.agentCode ? "pointer" : "not-allowed",
+                  opacity: assignModal.agentCode ? 1 : 0.5, display: "flex", justifyContent: "center", alignItems: "center", gap: "8px"
+                }}
+              >
+                {actionLoading === assignModal.userId + "-agent" ? <Loader2 className="admin-users-spin" size={18} /> : <CheckCircle2 size={18} />}
+                Confirm Assignment
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </section>
   );
 }
