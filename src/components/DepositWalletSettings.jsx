@@ -18,14 +18,8 @@ import { API_BASE } from "../config";
 
 const SUPABASE_URL = "https://obrfnkggcfgfspyqgtws.supabase.co";
 
-<div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-rose-500/20 text-rose-500">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
-                <line x1="12" y1="9" x2="12" y2="13" />
-                <line x1="12" y1="17" x2="12.01" y2="17" />
-              </svg>
-            </div>
-
+// This pulls your key from Vercel/env, fixing the crash and restoring uploads
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_KEY || "";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const supportedCoins = [
