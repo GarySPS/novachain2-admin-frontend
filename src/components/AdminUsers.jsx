@@ -191,6 +191,40 @@ const [pageSize, setPageSize] = useState(10);
     setActionLoading(null);
   };
 
+  const assignAgent = async (user_id) => {
+    const agentCode = window.prompt("Enter the Agent Username/Code to assign to this user:");
+    if (!agentCode) return; // Cancel if input is empty
+
+    setActionLoading(user_id + "-agent");
+    setError("");
+
+    try {
+      const token = localStorage.getItem("adminToken");
+
+      const res = await fetch(`${API_BASE}/api/admin/user/${user_id}/assign-agent`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}` 
+        },
+        body: JSON.stringify({ agentCode }),
+      });
+
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to assign agent");
+      }
+      
+      alert(data.message); // Show success pop-up
+      await fetchUsers(); // Refresh the table
+    } catch (err) {
+      setError(err.message || "Failed to assign agent");
+    }
+
+    setActionLoading(null);
+  };
+
   const generateNewPassword = async (user_id) => {
     setActionLoading(user_id + "-reset");
     setError("");
@@ -573,9 +607,27 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
                         </td>
 
 <td style={{ display: "flex", gap: "8px", border: "none" }}>
-                          <button
-                            type="button"
-                            onClick={() => generateNewPassword(user.id)}
+  
+  {/* NEW AGENT BUTTON */}
+  <button
+    type="button"
+    onClick={() => assignAgent(user.id)}
+    disabled={actionLoading === user.id + "-agent"}
+    className="admin-users-action-btn"
+    style={{ backgroundColor: "rgba(59, 130, 246, 0.15)", color: "#60a5fa" }}
+  >
+    {actionLoading === user.id + "-agent" ? (
+      <Loader2 className="admin-users-spin" size={15} />
+    ) : (
+      <UserCircle2 size={15} />
+    )}
+    <span>Assign Agent</span>
+  </button>
+
+  {/* Existing Reset Pass Button starts here */}
+  <button
+    type="button"
+    onClick={() => generateNewPassword(user.id)}
                             disabled={actionLoading === user.id + "-reset"}
                             className="admin-users-action-btn reset"
                           >
