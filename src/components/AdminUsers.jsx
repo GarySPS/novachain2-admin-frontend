@@ -407,6 +407,7 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
                 <tr>
                   <th>{t("users.userId")}</th>
                   <th>{t("users.email")}</th>
+                  <th>Balance</th>
                   <th>{t("users.loginAs")}</th>
                   <th>{t("users.selfie")}</th>
                   <th>{t("users.idCard")}</th>
@@ -420,7 +421,7 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
               <tbody>
                 {filteredUsers.length === 0 ? (
                   <tr>
-                    <td colSpan={9}>
+                    <td colSpan={10}>
                       <div className="admin-users-empty">
                         <UserCircle2 size={28} />
                         <strong>{t("users.noUsers")}</strong>
@@ -454,6 +455,19 @@ const approvedCount = users.filter((user) => user.kyc_status === "approved").len
                             >
                               {user.email}
                             </span>
+                          </div>
+                        </td>
+
+                        <td>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <span style={{ fontWeight: 'bold', color: '#10b981', letterSpacing: '0.5px' }}>
+                              ${Number(user.balance || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                            {Number(user.frozen_balance || 0) > 0 && (
+                              <span style={{ fontSize: '0.75rem', color: '#ef4444', fontWeight: '600' }}>
+                                Frozen: ${Number(user.frozen_balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </span>
+                            )}
                           </div>
                         </td>
 
