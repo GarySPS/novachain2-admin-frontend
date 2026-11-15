@@ -50,7 +50,7 @@ export default function AdminDeposits() {
       const token = localStorage.getItem("adminToken");
 
       const res = await fetch(`${API_BASE}/api/deposits`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { "x-admin-token": token },
       });
 
       const data = await res.json();
@@ -85,7 +85,7 @@ export default function AdminDeposits() {
 
       const res = await fetch(url, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { "x-admin-token": token },
       });
 
       const data = await res.json();
@@ -102,8 +102,33 @@ export default function AdminDeposits() {
     setActionLoading(null);
   };
 
+  const openMxnReceipt = async (id) => {
+    setError('');
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await fetch(`${API_BASE}/api/deposits/${id}/receipt`, {
+        headers: { 'x-admin-token': token },
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Unable to load receipt.');
+      setPreviewSlip({ url: data.imageDataUrl, title: `Deposit #${id} receipt` });
+    } catch (error) { setError(error.message || 'Unable to load receipt.'); }
+  };
+
   const getScreenshotUrl = (screenshot) => {
     if (!screenshot) return null;
+    if (screenshot.startsWith('mxn-spei:v2:')) {
+      try {
+        const body = screenshot.slice('mxn-spei:v2:'.length);
+        if (!/^[a-f0-9]{64}:/.test(body)) return { type: 'invalid' };
+        return { type: 'mxn', ...JSON.parse(body.slice(65)), receiptVersion: 2 };
+      } catch { return { type: 'invalid' }; }
+    }
+
+    if (screenshot.startsWith("mxn-spei:v1:")) {
+      try { return { type: "mxn", ...JSON.parse(screenshot.slice("mxn-spei:v1:".length)) }; }
+      catch { return { type: "invalid" }; }
+    }
 
     if (screenshot.startsWith("web3-tx-")) {
       return { type: "web3", hash: screenshot.replace("web3-tx-", "") };
@@ -134,9 +159,9 @@ export default function AdminDeposits() {
   };
 
   const getStatusLabel = (status) => {
-    if (status === "approved") return t("deposits.approved");
-    if (status === "pending") return t("deposits.pending");
-    if (status === "denied" || status === "rejected") return t("deposits.denied");
+    if (status === "approved") return t("wallet_deposit_succeeded", "Succeeded");
+    if (status === "pending") return t("wallet_deposit_processing", "Processing");
+    if (status === "denied" || status === "rejected") return t("wallet_deposit_failed", "Failed");
     return status || "Unknown";
   };
 
@@ -159,7 +184,8 @@ export default function AdminDeposits() {
           .toLowerCase()
           .includes(keyword) ||
         String(deposit.coin || "").toLowerCase().includes(keyword) ||
-        String(deposit.amount || "").toLowerCase().includes(keyword);
+        String(deposit.amount || "").toLowerCase().includes(keyword) ||
+        String(deposit.screenshot || "").toLowerCase().includes(keyword);
 
       return matchesStatus && matchesSearch;
     });
@@ -357,7 +383,7 @@ export default function AdminDeposits() {
 
                           <td>
                             <span className="admin-deposits-coin">
-                              {d.coin || "USDT"}
+                              {d.screenshot?.startsWith("mxn-spei:v1:") ? "MXN → USDT" : d.coin || "USDT"}
                             </span>
                           </td>
 
@@ -365,8 +391,15 @@ export default function AdminDeposits() {
                             <span className="admin-deposits-amount">
                               {Number(d.amount || 0).toLocaleString(undefined, {
                                 minimumFractionDigits: 2,
+                                maximumFractionDigits: 6,
                               })}
                             </span>
+                            {screenshotData?.type === "mxn" && (
+                              <div className="mt-1 text-xs text-slate-400">
+                                {Number(screenshotData.mxnAmount).toLocaleString()} MXN
+                                <div>1 USDT = {screenshotData.rateMxnPerUsdt} MXN</div>
+                              </div>
+                            )}
                           </td>
 
                           <td>
@@ -388,7 +421,27 @@ export default function AdminDeposits() {
 
                           <td>
                             {screenshotData ? (
-                              screenshotData.type === "web3" ? (
+                              screenshotData.type === "mxn" ? (
+                                <div className="max-w-[180px] space-y-1 text-xs">
+                                  <div className="font-semibold text-sky-300">SPEI transfer</div>
+                                  {screenshotData.receiptVersion === 2 ? (
+                                    <button type="button" className="flex items-center gap-1 text-sky-300 underline"
+                                      onClick={() => openMxnReceipt(d.id)}>
+                                      <Eye size={15} /> {t('wallet_view_receipt', 'View receipt')}
+                                    </button>
+                                  ) : (
+                                    <>
+                                      <div className="break-all font-mono text-white" title="Bank reference">{screenshotData.reference}</div>
+                                      <button type="button" className="text-sky-300 underline"
+                                        onClick={() => navigator.clipboard?.writeText(screenshotData.reference)}>
+                                        {t('wallet_copy', 'Copy')}
+                                      </button>
+                                    </>
+                                  )}
+                                </div>
+                              ) : screenshotData.type === "invalid" ? (
+                                <span className="text-rose-300">Invalid MXN record</span>
+                              ) : screenshotData.type === "web3" ? (
                                 <button
                                   type="button"
                                   className="admin-deposits-web3"
