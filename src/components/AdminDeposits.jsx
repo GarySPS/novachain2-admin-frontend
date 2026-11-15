@@ -50,7 +50,7 @@ export default function AdminDeposits() {
       const token = localStorage.getItem("adminToken");
 
       const res = await fetch(`${API_BASE}/api/deposits`, {
-        headers: { "x-admin-token": token },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await res.json();
@@ -85,7 +85,7 @@ export default function AdminDeposits() {
 
       const res = await fetch(url, {
         method: "POST",
-        headers: { "x-admin-token": token },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       const data = await res.json();
@@ -107,7 +107,7 @@ export default function AdminDeposits() {
     try {
       const token = localStorage.getItem('adminToken');
       const response = await fetch(`${API_BASE}/api/deposits/${id}/receipt`, {
-        headers: { 'x-admin-token': token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || 'Unable to load receipt.');
@@ -383,7 +383,7 @@ export default function AdminDeposits() {
 
                           <td>
                             <span className="admin-deposits-coin">
-                              {d.screenshot?.startsWith("mxn-spei:v1:") ? "MXN → USDT" : d.coin || "USDT"}
+                              {(d.screenshot?.startsWith("mxn-spei:v1:") || d.screenshot?.startsWith("mxn-spei:v2:")) ? "MXN → USDT" : d.coin || "USDT"}
                             </span>
                           </td>
 
