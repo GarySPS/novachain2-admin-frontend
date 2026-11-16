@@ -276,8 +276,8 @@ export default function DepositWalletSettings() {
 
           <h1>Deposit Wallet Settings</h1>
           <p>
-            Manage deposit wallet addresses and QR codes for supported coins.
-            Keep QR images compact and easy to review.
+            Manage MXN payment details and crypto wallet addresses in one place.
+            Save each payment method using its own controls.
           </p>
         </div>
 
@@ -293,7 +293,7 @@ export default function DepositWalletSettings() {
             ) : (
               <Save size={17} />
             )}
-            {saving ? "Saving..." : "Save Settings"}
+            {saving ? "Saving..." : "Save Crypto Wallets"}
           </button>
         )}
       </div>
@@ -467,7 +467,7 @@ export default function DepositWalletSettings() {
         <div className="admin-wallet-settings-footer">
           <div>
             <strong>Review before saving</strong>
-            <span>Changes are not final until you click Save Settings.</span>
+            <span>Crypto wallet changes are saved separately from MXN settings.</span>
           </div>
 
           <button
@@ -480,7 +480,7 @@ export default function DepositWalletSettings() {
             ) : (
               <Save size={18} />
             )}
-            {saving ? "Saving..." : "Save Settings"}
+            {saving ? "Saving..." : "Save Crypto Wallets"}
           </button>
         </div>
       )}
