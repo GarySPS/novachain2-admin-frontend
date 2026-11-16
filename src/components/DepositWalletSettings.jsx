@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { createClient } from "@supabase/supabase-js";
 import { API_BASE } from "../config";
+import MxnPaymentSettings from "./MxnPaymentSettings";
 
 const SUPABASE_URL = "https://obrfnkggcfgfspyqgtws.supabase.co";
 
@@ -296,6 +297,8 @@ export default function DepositWalletSettings() {
           </button>
         )}
       </div>
+
+      <MxnPaymentSettings />
 
       <div className="admin-wallet-settings-stats">
         <div>
