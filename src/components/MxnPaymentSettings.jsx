@@ -63,14 +63,14 @@ export default function MxnPaymentSettings() {
     loadSettings();
   }, []);
 
-  const rateValid = /^\\d+(?:\\.\\d{1,6})?$/.test(draft.rateMxnPerUsdt.trim()) &&
+  const rateValid = /^\d+(?:\.\d{1,6})?$/.test(draft.rateMxnPerUsdt.trim()) &&
     Number(draft.rateMxnPerUsdt) > 0 &&
     Number(draft.rateMxnPerUsdt) < 100000;
   const valid = draft.holder.trim().length >= 2 &&
     draft.holder.trim().length <= 100 &&
     draft.institution.trim().length >= 2 &&
     draft.institution.trim().length <= 70 &&
-    /^\\d{18}$/.test(draft.clabe.trim()) &&
+    /^\d{18}$/.test(draft.clabe.trim()) &&
     rateValid;
   const dirty = useMemo(() => JSON.stringify(draft) !== JSON.stringify(saved), [draft, saved]);
   const canSave = !loading && !saving && valid && (dirty || source !== "database");
@@ -171,7 +171,7 @@ export default function MxnPaymentSettings() {
               CLABE · 18 digits
               <input className={fieldClass + " font-mono tracking-wide"} value={draft.clabe}
                 inputMode="numeric" maxLength={18} autoComplete="off" placeholder="000000000000000000"
-                onChange={event => change("clabe", event.target.value.replace(/\\D/g, ""))} />
+                onChange={event => change("clabe", event.target.value.replace(/\D/g, ""))} />
             </label>
             <label className="block min-w-0 text-xs font-semibold text-slate-400">
               MXN per 1 USDT
