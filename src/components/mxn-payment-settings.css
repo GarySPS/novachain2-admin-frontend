@@ -1,0 +1,352 @@
+/* MXN · SPEI settings — scoped, independent of Tailwind compilation.
+   All interactive controls receive explicit foreground/background styling. */
+
+.admin-wallet-settings-page .mxn-settings-card {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  padding: 22px 24px;
+  border: 1px solid rgba(96, 165, 250, 0.18);
+  border-radius: 22px;
+  background: radial-gradient(circle at 94% 0%, rgba(56,189,248,.085), transparent 35%), linear-gradient(145deg,#131d2e 0%,#111827 65%,#101624 100%);
+  box-shadow: 0 12px 38px rgba(0,0,0,.12);
+  color: #f8fafc;
+}
+.admin-wallet-settings-page .mxn-settings-card * { box-sizing: border-box; }
+.mxn-settings-card .mxn-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 21px;
+}
+.mxn-settings-card .mxn-header-title {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 12px;
+}
+.mxn-settings-card .mxn-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid rgba(125,211,252,.28);
+  background: linear-gradient(150deg, #164f75, #152a45);
+  color: #7dd3fc;
+  font-size: 21px;
+  font-weight: 950;
+  box-shadow: inset 0 1px rgba(255,255,255,.08);
+}
+.mxn-settings-card .mxn-title-line {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.mxn-settings-card .mxn-title {
+  color: #f8fafc;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+  font-size: 19px;
+  font-weight: 850;
+}
+.mxn-settings-card .mxn-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 3px 8px;
+  border: 1px solid rgba(125, 211, 252, .16);
+  border-radius: 7px;
+  background: rgba(56, 189, 248, .08);
+  color: #8bd8fa;
+  font-size: 10px;
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: .025em;
+  white-space: nowrap;
+}
+.mxn-settings-card .mxn-subtitle {
+  margin: 6px 0 0;
+  color: #91a4bd;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.mxn-settings-card .mxn-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(148,163,184,.2);
+  border-radius: 11px;
+  background: rgba(255,255,255,.045);
+  color: #d7e5f7;
+  font-size: 12px;
+  font-weight: 750;
+  font-family: inherit;
+  cursor: pointer;
+}
+.mxn-settings-card .mxn-refresh:hover:not(:disabled) {
+  border-color: rgba(148,163,184,.45);
+  background: rgba(255,255,255,.08);
+}
+.mxn-settings-card .mxn-refresh:disabled { opacity: .45; cursor: not-allowed; }
+.mxn-settings-card .mxn-notice {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 18px;
+  padding: 10px 12px;
+  border: 1px solid rgba(125,211,252,.13);
+  border-radius: 12px;
+  background: rgba(14,116,144,.09);
+  color: #b8d4e6;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.mxn-settings-card .mxn-notice svg { flex-shrink: 0; color: #7dd3fc; }
+.mxn-settings-card .mxn-loading {
+  min-height: 152px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: #acbdd1;
+  font-size: 13px;
+}
+.mxn-settings-card .mxn-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px 20px;
+}
+.mxn-settings-card .mxn-field { display: block; min-width: 0; }
+.mxn-settings-card .mxn-field-label {
+  display: block;
+  margin: 0 0 8px;
+  color: #b8c8dd;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+.mxn-settings-card .mxn-field-hint {
+  margin: 6px 1px 0;
+  color: #778ba4;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.admin-wallet-settings-page .mxn-settings-card input.mxn-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  margin: 0;
+  padding: 0 14px;
+  border: 1px solid #324156;
+  border-radius: 12px;
+  background: #081321;
+  color: #f8fafc;
+  -webkit-text-fill-color: #f8fafc;
+  caret-color: #7dd3fc;
+  color-scheme: dark;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: normal;
+  font-weight: 700;
+  letter-spacing: 0;
+  opacity: 1;
+  outline: none;
+  box-shadow: none;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.admin-wallet-settings-page .mxn-settings-card input.mxn-input::placeholder {
+  color: #647b96;
+  -webkit-text-fill-color: #647b96;
+  opacity: 1;
+}
+.admin-wallet-settings-page .mxn-settings-card input.mxn-input:focus {
+  border-color: #38bdf8;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(56,189,248,.13);
+}
+.admin-wallet-settings-page .mxn-settings-card input.mxn-input::selection {
+  color: #ffffff;
+  background: #17618f;
+}
+.mxn-settings-card .mxn-input-wrap { position: relative; min-width: 0; }
+.admin-wallet-settings-page .mxn-settings-card .mxn-input-wrap .mxn-input--suffix { padding-right: 66px; }
+.mxn-settings-card .mxn-input-suffix {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #8bd8fa;
+  font-size: 11px;
+  font-weight: 850;
+}
+.mxn-settings-card .mxn-clabe-wrap {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 4px 5px 4px 0;
+  border: 1px solid #324156;
+  border-radius: 12px;
+  background: #081321;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+.mxn-settings-card .mxn-clabe-wrap:focus-within {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56,189,248,.13);
+}
+.admin-wallet-settings-page .mxn-settings-card .mxn-clabe-wrap input.mxn-input {
+  flex: 1 1 auto;
+  width: 0;
+  border: none;
+  border-radius: 0;
+  padding: 0 12px;
+  background: transparent;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  letter-spacing: .025em;
+  box-shadow: none;
+}
+.admin-wallet-settings-page .mxn-settings-card .mxn-clabe-wrap input.mxn-input:focus { border: none; box-shadow: none; }
+.mxn-settings-card .mxn-copy {
+  flex-shrink: 0;
+  min-width: 76px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 9px;
+  border: 1px solid rgba(56,189,248,.18);
+  border-radius: 9px;
+  background: rgba(14,116,144,.24);
+  color: #bae6fd;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.mxn-settings-card .mxn-copy:hover:not(:disabled) { background: rgba(14,116,144,.38); }
+.mxn-settings-card .mxn-copy:disabled { cursor: not-allowed; opacity: .5; }
+.mxn-settings-card .mxn-preview {
+  margin-top: 21px;
+  padding: 15px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border-radius: 14px;
+  background: #0a1423;
+  border: 1px solid rgba(148,163,184,.13);
+}
+.mxn-settings-card .mxn-preview-label {
+  margin: 0 0 4px;
+  color: #8fa2ba;
+  font-size: 10px;
+  letter-spacing: .075em;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+.mxn-settings-card .mxn-preview-note {
+  margin: 0;
+  color: #9badc5;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.mxn-settings-card .mxn-preview-value {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  font-size: 16px;
+  line-height: 1.35;
+  font-weight: 850;
+  color: #f8fafc;
+  font-variant-numeric: tabular-nums;
+}
+.mxn-settings-card .mxn-preview-value svg { color: #7dd3fc; }
+.mxn-settings-card .mxn-preview-value strong { color: #7dd3fc; font-size: 17px; }
+.mxn-settings-card .mxn-alert {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.mxn-settings-card .mxn-alert svg { flex-shrink: 0; margin-top: 1px; }
+.mxn-settings-card .mxn-alert--error { color: #fecaca; background: rgba(225,29,72,.11); border: 1px solid rgba(251,113,133,.19); }
+.mxn-settings-card .mxn-alert--success { color: #b6f4d1; background: rgba(16,185,129,.085); border: 1px solid rgba(52,211,153,.18); }
+.mxn-settings-card .mxn-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+.mxn-settings-card .mxn-button {
+  min-height: 43px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 850;
+  transition: background-color .16s ease, border-color .16s ease;
+  cursor: pointer;
+}
+.mxn-settings-card .mxn-button--primary {
+  color: #081526;
+  background: #7dd3fc;
+  border: 1px solid #7dd3fc;
+}
+.mxn-settings-card .mxn-button--primary:hover:not(:disabled) { background: #bae6fd; border-color: #bae6fd; }
+.mxn-settings-card .mxn-button--secondary {
+  color: #d9e6f5;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(148,163,184,.28);
+}
+.mxn-settings-card .mxn-button--secondary:hover:not(:disabled) { background: rgba(255,255,255,.09); }
+.mxn-settings-card .mxn-button:disabled { background: #243246; border-color: #334155; color: #92a1b5; cursor: not-allowed; opacity: .7; }
+.mxn-settings-card .mxn-confirm {
+  margin-top: 18px;
+  padding: 15px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(251,191,36,.27);
+  background: rgba(251,191,36,.055);
+}
+.mxn-settings-card .mxn-confirm-title { margin: 0; color: #fff; font-size: 14px; font-weight: 850; }
+.mxn-settings-card .mxn-confirm-desc { margin: 6px 0 0; color: #bac7d8; font-size: 12px; line-height: 1.6; }
+.mxn-settings-card .mxn-confirm .mxn-actions { justify-content: flex-start; margin-top: 12px; }
+@keyframes mxn-rotate { to { transform: rotate(360deg); } }
+.mxn-settings-card .mxn-spin { animation: mxn-rotate 1s linear infinite; }
+@media (max-width: 760px) {
+  .admin-wallet-settings-page .mxn-settings-card { padding: 17px; border-radius: 18px; }
+  .mxn-settings-card .mxn-fields { grid-template-columns: 1fr; gap: 14px; }
+  .mxn-settings-card .mxn-header { gap: 10px; }
+  .mxn-settings-card .mxn-preview { flex-direction: column; align-items: flex-start; }
+  .mxn-settings-card .mxn-actions { justify-content: stretch; }
+  .mxn-settings-card .mxn-actions .mxn-button { width: 100%; }
+}
+@media (max-width: 420px) {
+  .mxn-settings-card .mxn-logo { width: 38px; height: 38px; }
+  .mxn-settings-card .mxn-title { font-size: 17px; }
+  .mxn-settings-card .mxn-refresh { padding: 0 9px; }
+  .mxn-settings-card .mxn-preview-value { font-size: 14px; }
+  .mxn-settings-card .mxn-preview-value strong { font-size: 15px; }
+}
